@@ -1,0 +1,51 @@
+import express from "express";
+
+const app = express();
+const port = 3000;
+
+app.get("/", (req, res) => {
+  res.send("Hallo Welt!");
+});
+
+app.listen(port, () => {
+  console.log(`Beispiel-App läuft auf http://localhost:${port}`);
+});
+
+app.use((req, res, next) => {
+  console.log("Hello from Middleware");
+  next();
+});
+
+app.get("/products", (req, res) => {
+  // ...dann sende diese Antwort an den Client
+  res.send("Hier ist eine Liste aller Produkte");
+});
+
+import { MongoClient, ServerApiVersion } from "mongodb";
+const uri =
+  "mongodb+srv://davidandrist_db_user:9iM3QxLT3YzgT3fP@teko.u93m7mu.mongodb.net/?appName=Teko";
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
+
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!",
+    );
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+}
+run().catch(console.dir);
