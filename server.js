@@ -1,7 +1,8 @@
 import "dotenv/config";
 import express from "express";
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import { MongoClient, ServerApiVersion } from "mongodb";
+import product from "./models/product.js";
 
 const app = express();
 const port = 3000;
@@ -11,15 +12,6 @@ app.use(express.json());
 app.listen(port, () => {
   console.log(`Beispiel-App läuft auf http://localhost:${port}`);
 });
-
-const ProductSchema = new Schema({
-  title: { type: String, default: [true, "Titel fehlt"] },
-  description: String,
-  active: { type: Boolean, default: true },
-  price: { max: 9999, type: Number },
-});
-
-const Product = mongoose.model("Product", ProductSchema);
 
 app.get(`/api/produkte`, async (req, res) => {
   try {
@@ -47,9 +39,7 @@ async function run() {
     await client.connect();
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!",
-    );
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
     await client.close();
