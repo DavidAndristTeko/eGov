@@ -1,3 +1,5 @@
+require("dotenv").config();
+const mongoose = require("mongoose");
 import express from "express";
 
 const app = express();
@@ -22,8 +24,7 @@ app.get("/products", (req, res) => {
 });
 
 import { MongoClient, ServerApiVersion } from "mongodb";
-const uri =
-  "mongodb+srv://davidandrist_db_user:9iM3QxLT3YzgT3fP@teko.u93m7mu.mongodb.net/?appName=Teko";
+const uri = process.env.MONGODB_URI;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
