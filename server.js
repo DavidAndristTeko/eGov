@@ -1,6 +1,7 @@
-require("dotenv").config();
-const mongoose = require("mongoose");
-const express = require("express"); // Changed from 'import'
+import "dotenv/config";
+import express from "express";
+import mongoose, { Schema } from "mongoose";
+import { MongoClient, ServerApiVersion } from "mongodb";
 
 const app = express();
 const port = 3000;
@@ -23,7 +24,6 @@ app.get("/products", (req, res) => {
   res.send("Hier ist eine Liste aller Produkte");
 });
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
 const uri = process.env.MONGODB_URI;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -50,3 +50,10 @@ async function run() {
   }
 }
 run().catch(console.dir);
+
+const ProductSchema = new Schema({
+  title: { type: String, default: [true, "Titel fehlt"] },
+  description: String,
+  active: { type: Boolean, default: true },
+  price: { max: 9999, type: Number },
+});
