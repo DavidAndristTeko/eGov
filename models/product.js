@@ -7,5 +7,5 @@ const productSchema = new Schema({
   price: { max: 9999, type: Number },
 });
 
-const product = mongoose.model("Product", ProductSchema);
+const product = mongoose.model("product", productSchema);
 export default Product;
