@@ -6,22 +6,30 @@ import { MongoClient, ServerApiVersion } from "mongodb";
 const app = express();
 const port = 3000;
 
-app.get("/", (req, res) => {
-  res.send("Hallo Welt!");
-});
+app.use(express.json());
 
 app.listen(port, () => {
   console.log(`Beispiel-App läuft auf http://localhost:${port}`);
 });
 
-app.use((req, res, next) => {
-  console.log("Hello from Middleware");
-  next();
+mongoose.connect(process.env.MONGO_URL);
+
+const ProductSchema = new Schema({
+  title: { type: String, default: [true, "Titel fehlt"] },
+  description: String,
+  active: { type: Boolean, default: true },
+  price: { max: 9999, type: Number },
 });
 
-app.get("/products", (req, res) => {
-  // ...dann sende diese Antwort an den Client
-  res.send("Hier ist eine Liste aller Produkte");
+const Product = mongoose.model("Product", ProductSchema);
+
+app.get(`/api/produkte`, async (req, res) => {
+  try {
+    const produkte = await Product.find();
+    res.json(produkte);
+  } catch (error) {
+    res.status(500).json({ error: "Fehler beim Laden der Daten!" });
+  }
 });
 
 const uri = process.env.MONGODB_URI;
@@ -41,19 +49,10 @@ async function run() {
     await client.connect();
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!",
-    );
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
     await client.close();
   }
 }
 run().catch(console.dir);
-
-const ProductSchema = new Schema({
-  title: { type: String, default: [true, "Titel fehlt"] },
-  description: String,
-  active: { type: Boolean, default: true },
-  price: { max: 9999, type: Number },
-});
