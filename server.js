@@ -1,6 +1,6 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-import express from "express";
+const express = require("express"); // Changed from 'import'
 
 const app = express();
 const port = 3000;
@@ -23,7 +23,7 @@ app.get("/products", (req, res) => {
   res.send("Hier ist eine Liste aller Produkte");
 });
 
-import { MongoClient, ServerApiVersion } from "mongodb";
+const { MongoClient, ServerApiVersion } = require("mongodb");
 const uri = process.env.MONGODB_URI;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
