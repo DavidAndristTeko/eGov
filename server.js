@@ -12,8 +12,6 @@ app.listen(port, () => {
   console.log(`Beispiel-App läuft auf http://localhost:${port}`);
 });
 
-mongoose.connect(process.env.MONGO_URL);
-
 const ProductSchema = new Schema({
   title: { type: String, default: [true, "Titel fehlt"] },
   description: String,
@@ -49,7 +47,9 @@ async function run() {
     await client.connect();
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!",
+    );
   } finally {
     // Ensures that the client will close when you finish/error
     await client.close();
