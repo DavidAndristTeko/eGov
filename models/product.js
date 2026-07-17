@@ -1,10 +1,10 @@
 import mongoose, { Schema } from "mongoose";
 
 const productSchema = new Schema({
-  productNumber: { type: Number, required: true },
-  title: { type: String, required: [true, "Titel fehlt"] },
+  productId: { type: Number, required: true, unique: true },
+  productName: { type: String, required: [true, "Titel fehlt"], trim: true },
   description: String,
-  active: { type: Boolean, required: true, default: true },
+  productActive: { type: Boolean, required: true, default: true },
   price: { min: 0, max: 9999, type: Number, default: 0 },
 });
 

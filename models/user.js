@@ -1,12 +1,12 @@
 import mongoose, { Schema } from "mongoose";
 
 const userSchema = new Schema({
-  UserId: { type: Number, required: true },
-  Firstname: { type: String, required: [true, "Vorname fehlt"] },
-  Lastname: { type: String, required: [true, "Nachname fehlt"] },
-  UserName: { type: String, required: [true, "Username fehlt"] },
-  Password: { type: String, required: [true, "Passwort fehlt"] },
-  active: { type: Boolean, required: true, default: true },
+  userId: { type: Number, required: true, unique: true },
+  firstname: { type: String, required: [true, "Vorname fehlt"], trim: true, minLength: 2, maxLength: 50, match: /^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$/ },
+  lastname: { type: String, required: [true, "Nachname fehlt"], trim: true, minLength: 2, maxLength: 50, match: /^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$/ },
+  userName: { type: String, required: [true, "Username fehlt"], trim: true, minLength: 2, maxLength: 50, match: /^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$/ },
+  password: { type: String, required: [true, "Passwort fehlt"], trim: true, minLength: 8 },
+  userActive: { type: Boolean, required: true, default: true },
 });
 
 const user = mongoose.model("User", userSchema);
