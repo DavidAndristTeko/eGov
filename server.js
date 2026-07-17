@@ -2,12 +2,19 @@ import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
 import { MongoClient, ServerApiVersion } from "mongodb";
+import cors from "cors";
 import product from "./models/product.js";
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
+// Entwicklung: alle Origins erlauben
+app.use(cors());
 app.use(express.json());
+
+app.get("/", (req, res) => {
+  res.json({ message: "Server läuft korrekt." });
+});
 
 app.listen(port, () => {
   console.log(`Beispiel-App läuft auf http://localhost:${port}`);
@@ -39,7 +46,9 @@ async function run() {
     await client.connect();
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!",
+    );
   } finally {
     // Ensures that the client will close when you finish/error
     await client.close();
