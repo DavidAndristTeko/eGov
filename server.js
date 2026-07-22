@@ -1,23 +1,24 @@
-import "dotenv/config";
-import express from "express";
-import mongoose from "mongoose";
-import { MongoClient, ServerApiVersion } from "mongodb";
-import cors from "cors";
-import product from "./models/product.js";
+import "dotenv/config"; //Importiert MongoDB URL aus .env Datei
+import express from "express"; //Importiert Express Framework
+import mongoose from "mongoose"; //Importiert Mongoose ODM Framework
+import { MongoClient, ServerApiVersion } from "mongodb"; //Importiert Komponenten aus mongodb npm package, welche in diesem Projekt genutzt werden
+import cors from "cors"; //Importiert Cors. Cors wird genutzt um Anfrangen über Domains hinweg zu ermöglichen.
+import product from "./models/product.js"; //Importiert Product-Modell
 
-const app = express();
-const port = process.env.PORT || 3000;
+const app = express(); //Konstante für Express App
+const port = process.env.PORT || 3000; //Konstante für Port. Nutzt Port der Umgebung und defaultet sonst auf 3000
 
-// Entwicklung: alle Origins erlauben
-app.use(cors());
-app.use(express.json());
+app.use(cors()); //Cors wird genutzt um Anfragen von jeder Domain in der Express App zu erlauben. Für Entwicklungs-Zwecke. Würde man produktiv nicht so machen.
+app.use(express.json()); //Express.JSON ermöglicht das verarbeiten von einkommenden JSON Request Bodies
 
 app.get("/", (req, res) => {
-  res.json({ message: "Server läuft korrekt." });
+  //Wenn jemand eine Request auf "/" macht...
+  res.json({ message: "Server läuft korrekt." }); //...schick diese Nachricht zurück
 });
 
 app.listen(port, () => {
-  console.log(`Beispiel-App läuft auf http://localhost:${port}`);
+  //Achtet auf einkommende HTTP Connections auf diesem Port...
+  console.log(`Beispiel-App läuft auf http://localhost:${port}`); //...und schickt diese Nachricht einmalig, wenn etwas eintrifft. Fungiert essenziell als unser Test ob der Server läuft.
 });
 
 app.get(`/api/produkte`, async (req, res) => {
