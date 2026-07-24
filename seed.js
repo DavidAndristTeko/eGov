@@ -1,22 +1,31 @@
-import "dotenv/config";
-import mongoose from "mongoose";
-import User from "./models/user.js";
-import Product from "./models/product.js";
-import Order from "./models/order.js";
+import "dotenv/config"; //Importiert Umgebungsvariabeln aus .env Datei
+import mongoose from "mongoose"; //Importiert Mongoose ODM Framework
+import User from "./models/user.js"; //Importiert User-Modell
+import Product from "./models/product.js"; //Importiert Product-Modell
+import Order from "./models/order.js"; //Importiert Order-Modell
 
-const uri = process.env.MONGODB_URI;
+const uri = process.env.MONGODB_URI; //Speichert Umgebungsvariable aus .env Datei in Konstante
 
+//Prüft ob uri Variable undefined ist, gibt error aus, falls dies der Fall ist und Beendet das node.js programm
 if (!uri) {
-  console.error("Keine MongoDB-URI gefunden. MONGODB_URI muss in der .env-Datei korrekt vorhanden sein.");
+  console.error(
+    "Keine MongoDB-URI gefunden. MONGODB_URI muss in der .env-Datei korrekt vorhanden sein.",
+  );
   process.exit(1);
 }
 
-async function seed() {
+async function seed() { 
   try {
+    //Versucht Verbindung zur db herzustellen...
     await mongoose.connect(uri);
     console.log("Verbindung zur Datenbank hergestellt.");
 
-    await Promise.all([User.deleteMany({}), Product.deleteMany({}), Order.deleteMany({})]);
+    //...bereits vorhandene Testdaten in der db zu löschen
+    await Promise.all([
+      User.deleteMany({}),
+      Product.deleteMany({}),
+      Order.deleteMany({}),
+    ]);
 
     const users = await User.create([
       {

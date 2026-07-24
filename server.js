@@ -9,7 +9,7 @@ const app = express(); //Konstante für Express App
 const port = process.env.PORT || 3000; //Konstante für Port. Nutzt Port der Umgebung und defaultet sonst auf 3000
 const uri = process.env.MONGODB_URI; //Speichert Umgebungsvariable aus .env Datei in Konstante
 
-// Erstellt ein Objekt der Klasse "MongoClient", welche in Zukunft z. B. für Datenbankabfragen genutzt werden kann
+// Erstellt ein Objekt der Klasse "MongoClient", welches später für einen Verbindungstest genutzt wird
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1, //Nutzt Stable-Version der API
@@ -42,7 +42,7 @@ app.get("/", (req, res) => {
 
 app.listen(port, () => {
   //Achtet auf einkommende HTTP Connections auf diesem Port...
-  console.log(`Beispiel-App läuft auf http://localhost:${port}`); //...und schickt diese Nachricht einmalig, wenn etwas eintrifft. Fungiert essenziell als unser Test ob der Server läuft.
+  console.log(`Beispiel-App läuft auf http://localhost:${port}`); //...und schickt diese Nachricht einmalig, beim Serverstart. Fungiert essenziell als unser Test ob der Server läuft.
 });
 
 app.get(`/api/produkte`, async (req, res) => {
