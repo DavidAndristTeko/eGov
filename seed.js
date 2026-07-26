@@ -14,19 +14,19 @@ if (!uri) {
   process.exit(1);
 }
 
-async function seed() { 
+async function seed() {
   try {
-    //Versucht Verbindung zur db herzustellen...
+    //Versucht Verbindung zur db herzustellen,...
     await mongoose.connect(uri);
     console.log("Verbindung zur Datenbank hergestellt.");
 
-    //...bereits vorhandene Testdaten in der db zu löschen
+    //...bereits vorhandene Testdaten in der db zu löschen,...
     await Promise.all([
       User.deleteMany({}),
       Product.deleteMany({}),
       Order.deleteMany({}),
     ]);
-
+    //...neue Testdaten zu erstellen...
     const users = await User.create([
       {
         userId: 1001,
@@ -86,7 +86,7 @@ async function seed() {
         orderStatus: 3,
       },
     ]);
-
+    //...gibt aus, ob erfolgreich oder nicht. Zuletzt wird die Db-Verbindung getrennt.
     console.log("Seed-Daten erfolgreich angelegt.");
   } catch (error) {
     console.error("Fehler beim Seeding:", error);
@@ -96,4 +96,5 @@ async function seed() {
   }
 }
 
+//Funktion wird ausgeführt
 seed();
