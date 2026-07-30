@@ -4,6 +4,8 @@ import mongoose from "mongoose"; //Importiert Mongoose ODM Framework
 import { MongoClient, ServerApiVersion } from "mongodb"; //Importiert Komponenten aus mongodb npm package, welche in diesem Projekt genutzt werden
 import cors from "cors"; //Importiert Cors. Cors wird genutzt um Anfrangen über Domains hinweg zu ermöglichen.
 import product from "./models/product.js"; //Importiert Product-Modell
+import user from "./models/user.js"; // Importiert User-Modell
+import order from "./models/order.js"; // Importiert Bestellung-Modell
 
 const app = express(); //Konstante für Express App
 const port = process.env.PORT || 3000; //Konstante für Port. Nutzt Port der Umgebung und defaultet sonst auf 3000
@@ -13,15 +15,6 @@ mongoose
   .connect(uri) //Verbindung zur Datenbank wird hergestellt
   .then(() => console.log("Mit MongoDB verbunden.")) //Meldung für erfolgreiche Verbindung
   .catch((error) => console.error("Fehler beim Verbinden mit MongoDB:", error)); //Meldung für fehlgeschlagene Verbindung
-
-// Erstellt ein Objekt der Klasse "MongoClient", welches später für einen Verbindungstest genutzt wird
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1, //Nutzt Stable-Version der API
-    strict: true, //Lässt nur Commands zu, welche offizieller Bestandteil des Stable-Sets sind
-    deprecationErrors: true, //Wenn Commands des Stable-Sets genutzt werden, welche als depreaceated markiert sind, wird ein Error anstatt eine Warnung geworfen
-  },
-});
 
 app.use(cors()); //Cors wird genutzt um Anfragen von jeder Domain in der Express App zu erlauben. Für Entwicklungs-Zwecke. Würde man produktiv nicht so machen.
 app.use(express.json()); //Express.JSON ermöglicht das verarbeiten von einkommenden JSON Request Bodies
@@ -36,12 +29,39 @@ app.listen(port, () => {
   console.log(`Beispiel-App läuft auf http://localhost:${port}`); //...und schickt diese Nachricht einmalig, beim Serverstart. Fungiert essenziell als unser Test ob der Server läuft.
 });
 
-app.get(`/api/produkte`, async (req, res) => {
-  //Zieht alle dokumente von der "produkte" Mongoose Collection
+app.get(`/api/products`, async (req, res) => {
+  //Zieht alle dokumente von der "products" Mongoose Collection
   try {
-    const produkte = await product.find(); //Wartet bis DB-Abfrage durchgeführt wurde, damit alle Produkte in Konstante gespeichert werden.
-    res.json(produkte); //Antwortet mit den von der DB abgerufenen Produkten
+    const products = await product.find(); //Wartet bis DB-Abfrage durchgeführt wurde, damit alle Produkte in Konstante gespeichert werden.
+    res.json(products); //Antwortet mit den von der DB abgerufenen Produkten
   } catch (error) {
     res.status(500).json({ error: "Fehler beim Laden der Daten!" }); //Gibt bei Problemen eine Fehlermeldung aus
+  }
+});
+
+app.get(`/api/products/:id`, async (req, res) => {
+  //Zieht ein Dokument von der "products" Mongoose Collection basierend auf der id
+  try {
+    const oneProduct = await product.findById(req.params.id);
+    if (!oneProduct) {
+      //Falls Produkt-ID nicht gefunden wurde, wird Fehlermeldung ausgegeben
+      return res.status(404).json({ error: "Produkt nicht gefunden!" });
+    }
+    res.json(oneProduct);
+  } catch (error) {
+    //Falls Serverseitig etwas schiefläuft, wird eine Fehlermeldung ausgegeben
+    res.status(500).json({ error: "Fehler beim Laden des Produkts!" });
+  }
+});
+
+app.post(`/api/users`, async (req, res) => {
+  try {
+    //Erstellt ein Dokument in der "users" MongoDB Collection
+    const newUser = await user.create(req.body);
+    //Gibt Statuscode für erfolgreiche Erstellung und Daten des Nutzers zurück
+    res.status(201).json(newUser);
+  } catch (error) {
+    //Falls User eingabe macht, die nicht mit dem Schema übereinstimmt, wird Statuscode für fehlende/falsche Angaben ausgegeben und Fehlermeldung was nicht stimmt
+    res.status(400).json({ error: error.message });
   }
 });
