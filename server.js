@@ -33,9 +33,30 @@ app.get(`/api/products`, async (req, res) => {
   //Zieht alle dokumente von der "products" Mongoose Collection
   try {
     const products = await product.find(); //Wartet bis DB-Abfrage durchgeführt wurde, damit alle Produkte in Konstante gespeichert werden.
-    res.json(products); //Antwortet mit den von der DB abgerufenen Produkten
+    res.json(products); //Gibt Antworten der DB Anfrage zurück an das Frontend
   } catch (error) {
     res.status(500).json({ error: "Fehler beim Laden der Daten!" }); //Gibt bei Problemen eine Fehlermeldung aus
+  }
+});
+
+//GET Routehandler für Suchen von Produkten
+app.get(`/api/products/search`, async (req, res) => {
+  try {
+    const searchTerm = req.query.name;
+
+    //Prüft ob Suchtext leer ist und retourniert in diesem Fall alle Produkte
+    if (!searchTerm || searchTerm.trim() === "") {
+      const allProducts = await product.find();
+      return res.json(allProducts);
+    }
+
+    //Sucht Dokumente in "products" Mongoose Collection die Such-text entsprechen
+    const results = await product.find({
+      productName: { $regex: searchTerm, $options: "i" },
+    });
+    res.json(results);
+  } catch (error) {
+    res.status(500).json({ error: "Fehler bei der Suche!" });
   }
 });
 
@@ -79,10 +100,70 @@ app.put(`/api/users/:id`, async (req, res) => {
       //..und gibt entsprechenden Error aus
       return res.status(404).json({ error: "Nutzer nicht gefunden!" });
     }
-    res.json(updatedUser); //Aktualisierte Werte werden zurück ans Frontend geschickt.
-    //Falls es einen Error gibt..
+    res.json(updatedUser);
   } catch (error) {
-    //..liegt dies höchstwahrscheinlich dran, dass Angaben nicht mit Schema übereinstimmen. User wird entsprechender Error ausgegeben.
     res.status(400).json({ error: error.message });
+  }
+});
+
+//GET Routehandler um alle Bestellung eines Nutzers abzurufen
+app.get(`/api/users/:id/orders`, async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    //Zieht alle Bestellungen die unter dieser User Id getätigt wurden
+    const userOrders = await order.find({ user: userId }).populate("product");
+
+    res.json(userOrders);
+  } catch (error) {
+    console.error("Error fetching user orders:", error);
+    res
+      .status(500)
+      .json({ error: "Fehler beim Laden der Benutzerbestellungen!" });
+  }
+});
+
+//POST Route handler für neue Bestellungen
+app.post(`/api/orders`, async (req, res) => {
+  try {
+    //Erstellt ein Dokument in der "orders" MongoDB Collection
+    const newOrder = await order.create(req.body);
+    res.status(201).json(newOrder);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+//PUT Route handler für Anpassungen an Bestellungen
+app.put(`/api/orders/:id`, async (req, res) => {
+  try {
+    const updatedOrder = await order.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+    if (!updatedOrder) {
+      return res.status(404).json({ error: "Bestellung nicht gefunden!" });
+    }
+    res.json(updatedOrder);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+//DELETE Route handler für Stornieren von Bestellungen
+app.delete(`/api/orders/:id`, async (req, res) => {
+  try {
+    const deletedOrder = await order.findByIdAndDelete(req.params.id);
+    if (!deletedOrder) {
+      return res.status(404).json({ error: "Bestellung nicht gefunden!" });
+    }
+    res.status(200).json({ message: "Bestellung erfolgreich storniert." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Fehler beim Stornieren der Bestellung!" });
   }
 });
