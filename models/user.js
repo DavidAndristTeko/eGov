@@ -39,8 +39,8 @@ const userSchema = new Schema({
 
 //Bevor eine .save() Operation auf das Model ausgeführt wird..
 userSchema.pre("save", async function (next) {
-  //...und wenn das Passwort auch wirklich angepasst wurde...
-  //Reguläre anstatt Pfeilfunktion wird genutzt, da "this" in Pfeilfunktion nicht verlässlich auf das Objekt verweisen würde
+  /*...und wenn das Passwort auch wirklich angepasst wurde...
+  (Reguläre anstatt Pfeilfunktion wird genutzt, da "this" in Pfeilfunktion nicht verlässlich auf das Objekt verweisen würde)*/
   if (!this.isModified("password")) {
     return; //Falls Passwort nicht angepasst wurde aus Funktion treten
   }
