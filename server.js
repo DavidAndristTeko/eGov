@@ -65,3 +65,24 @@ app.post(`/api/users`, async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
+
+//PUT Route handler für Anpassungen an Nutzern
+app.put(`/api/users/:id`, async (req, res) => {
+  try {
+    //Selektiert User anhand ID und übergibt aktualisierte Werte and DB. Aktualisierte Werte werden in Konstante gespeichert.
+    const updatedUser = await user.findByIdAndUpdate(req.params.id, req.body, {
+      new: true, //Übergibt das aktualisierte Dokument
+      runValidators: true, //Validiert ob Werte mit Schema übereinstimmen
+    });
+    //Prüft ob User gefunden wurde..
+    if (!updatedUser) {
+      //..und gibt entsprechenden Error aus
+      return res.status(404).json({ error: "Nutzer nicht gefunden!" });
+    }
+    res.json(updatedUser); //Aktualisierte Werte werden zurück ans Frontend geschickt.
+    //Falls es einen Error gibt..
+  } catch (error) {
+    //..liegt dies höchstwahrscheinlich dran, dass Angaben nicht mit Schema übereinstimmen. User wird entsprechender Error ausgegeben.
+    res.status(400).json({ error: error.message });
+  }
+});
