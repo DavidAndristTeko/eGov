@@ -6,6 +6,8 @@ import cors from "cors"; //Importiert Cors. Cors wird genutzt um Anfrangen über
 import product from "./models/product.js"; //Importiert Product-Modell
 import user from "./models/user.js"; // Importiert User-Modell
 import order from "./models/order.js"; // Importiert Bestellung-Modell
+import jwt from "jsonwebtoken"; //Importiert JWT für Session-Tokens
+import bcrypt from "bcrypt"; //Importiert Bcrypt welches für den Passwortvergleich beim Login benötigt wird
 
 const app = express(); //Konstante für Express App
 const port = process.env.PORT || 3000; //Konstante für Port. Nutzt Port der Umgebung und defaultet sonst auf 3000
@@ -103,6 +105,48 @@ app.put(`/api/users/:id`, async (req, res) => {
     res.json(updatedUser);
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+});
+
+//POST Route handler für Login
+app.post(`/api/login`, async (req, res) => {
+  try {
+    //Zieht mittels destructuring das Passwort und den Benutzernamen aus dem Request Body
+    const { userName, password } = req.body;
+
+    //Sucht User anhand Username
+    const foundUser = await user.findOne({ userName });
+    if (!foundUser) {
+      return (
+        res
+          //Statuscode für "Unautherized". Kann genutzt werden wenn Credentials falsch sind oder fehlen
+          .status(401)
+          .json({ error: "Ungültiger Username oder Passwort!" })
+      );
+    }
+
+    //Eingegebens Passwort wird gehasht und mit hinterlegtem, gehashten Passwort verglichen
+    const passwordMatches = await bcrypt.compare(password, foundUser.password);
+    if (!passwordMatches) {
+      return res
+        .status(401)
+        .json({ error: "Ungültiger Username oder Passwort!" });
+    }
+
+    //Erstellt Token. _id des Users wurde als Payload definiert. Token wird mit Schlüssel aus .env signiert
+    const token = jwt.sign({ id: foundUser._id }, process.env.JWT_SECRET, {
+      //Token ist gültig für 1 Tag
+      expiresIn: "1d",
+    });
+
+    //Schickt Token, _id des Users und Usernamen an Frontend
+    res.json({
+      token,
+      user: { id: foundUser._id, userName: foundUser.userName },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Fehler beim Login!" });
   }
 });
 
