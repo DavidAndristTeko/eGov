@@ -20,6 +20,7 @@ const userSchema = new Schema({
     maxLength: 50,
     match: /^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$/,
   },
+  //Nennen das Attribut userName, da dies später effizienteren Code erlaubt. z. B. findOne({userName}) anstatt findOne({userName: benutzername})
   userName: {
     type: String,
     required: [true, "Username fehlt"],
