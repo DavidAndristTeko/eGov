@@ -108,6 +108,22 @@ app.put(`/api/users/:id`, async (req, res) => {
   }
 });
 
+//DELETE Route handler für Löschen von Nutzern
+app.delete(`/api/users/:id`, async (req, res) => {
+  try {
+    const deletedUser = await user.findByIdAndDelete(req.params.id);
+    if (!deletedUser) {
+      return res.status(404).json({ error: "Nutzer nicht gefunden!" });
+    }
+    //Löscht alle Bestellungen, die mit diesem Nutzer verknüpft sind
+    await order.deleteMany({ user: req.params.id });
+    res.status(200).json({ message: "Nutzer und zugehörige Bestellungen erfolgreich gelöscht." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Fehler beim Löschen des Nutzers!" });
+  }
+});
+
 //POST Route handler für Login
 app.post(`/api/login`, async (req, res) => {
   try {
