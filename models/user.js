@@ -1,9 +1,11 @@
-import mongoose, { Schema } from "mongoose"; //Schema Klasse wird importiert, damit man später im Code einsch "Schema" schreiben kann anstatt "mongoose.Schema"
-import bcrypt from "bcrypt"; //Bcrypt wird importiert für Passwort Hashing
+//Schema Klasse wird importiert, damit man später im Code einsch "Schema" schreiben kann anstatt "mongoose.Schema"
+import mongoose, { Schema } from "mongoose";
+//Bcrypt wird importiert für Passwort Hashing
+import bcrypt from "bcrypt";
 
 //Schema wird definiert
 const userSchema = new Schema({
-  userId: { type: Number, required: true, unique: true }, //ID des Users
+  userId: { type: Number, required: true, unique: true },
   firstname: {
     type: String,
     required: [true, "Vorname fehlt"],
@@ -43,9 +45,11 @@ userSchema.pre("save", async function (next) {
   /*...und wenn das Passwort auch wirklich angepasst wurde...
   (Reguläre anstatt Pfeilfunktion wird genutzt, da "this" in Pfeilfunktion nicht verlässlich auf das Objekt verweisen würde)*/
   if (!this.isModified("password")) {
-    return; //Falls Passwort nicht angepasst wurde aus Funktion treten
+    //Falls Passwort nicht angepasst wurde aus Funktion treten
+    return;
   }
-  this.password = await bcrypt.hash(this.password, 10); //...das Passwort hashen. 10 Salt rounds, da dies der konventionel genutzte wert ist.
+  //...das Passwort hashen. 10 Salt rounds, da dies der konventionel genutzte wert ist.
+  this.password = await bcrypt.hash(this.password, 10);
 });
 
 /*Die obere hook greift, wenn ein neuer User erstellt wird. Sollte ein User jedoch sein Passwort ändern, läuft dies nicht über POST, sondern PUT,
@@ -62,5 +66,7 @@ userSchema.pre("findOneAndUpdate", async function () {
   }
 });
 
-const user = mongoose.model("User", userSchema); //Schema wird als Model registriert
-export default user; //Stellt dieses Modell zur Verfügung, damit es in anderen Files importiert werden kann
+//Schema wird als Model registriert
+const user = mongoose.model("User", userSchema);
+//Stellt dieses Modell zur Verfügung, damit es in anderen Files importiert werden kann
+export default user;

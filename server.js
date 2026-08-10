@@ -1,51 +1,74 @@
-import "dotenv/config"; //Importiert Umgebungsvariabeln aus .env Datei
-import express from "express"; //Importiert Express Framework
-import mongoose from "mongoose"; //Importiert Mongoose ODM Framework
-import cors from "cors"; //Importiert Cors, welches Anfragen über Domains und Ports hinweg erlaubt. Wird hier z. B. genutzt um Kommunikation zwischen Frontend und Backend zu ermöglichen.
-import product from "./models/product.js"; //Importiert Product-Modell
-import user from "./models/user.js"; // Importiert User-Modell
-import order from "./models/order.js"; // Importiert Bestellung-Modell
-import jwt from "jsonwebtoken"; //Importiert JWT für Session-Tokens. Sessions werden genutzt damit der User nach einem Login auf unserer Webseite eingeloggt bleibt.
-import bcrypt from "bcrypt"; //Importiert Bcrypt welches für den Passwortvergleich beim Login benötigt wird
+//Importiert Umgebungsvariabeln aus .env Datei
+import "dotenv/config";
+//Importiert Express Framework
+import express from "express";
+//Importiert Mongoose ODM Framework
+import mongoose from "mongoose";
+/*Importiert Cors, welches Anfragen über Domains und Ports hinweg erlaubt. 
+Wird hier z. B. genutzt um Kommunikation zwischen Frontend und Backend zu ermöglichen*/
+import cors from "cors";
+//Importiert Product-Modell
+import product from "./models/product.js";
+// Importiert User-Modell
+import user from "./models/user.js";
+// Importiert Bestellung-Modell
+import order from "./models/order.js";
+//Importiert JWT für Session-Tokens. Sessions werden genutzt damit der User nach einem Login auf unserer Webseite eingeloggt bleibt
+import jwt from "jsonwebtoken";
+//Importiert Bcrypt welches für den Passwortvergleich beim Login benötigt wird
+import bcrypt from "bcrypt";
 
-const app = express(); //Konstante für Express App
-const port = process.env.PORT; //Speichert Umgebungsvariable für Port aus .env Datei in Konstante
-const uri = process.env.MONGODB_URI; //Speichert Umgebungsvariable für MongoDB-URI aus .env Datei in Konstante
+//Konstante um Express-App anzusprechen
+const app = express();
+//Speichert Umgebungsvariable für Port aus .env Datei in Konstante
+const port = process.env.PORT;
+//Speichert Umgebungsvariable für MongoDB-URI aus .env Datei in Konstante
+const uri = process.env.MONGODB_URI;
 
 mongoose
-  .connect(uri) //Verbindung zur Datenbank wird hergestellt
-  .then(() => console.log("Mit MongoDB verbunden.")) //Meldung für erfolgreiche Verbindung
-  .catch((error) => console.error("Fehler beim Verbinden mit MongoDB:", error)); //Meldung für fehlgeschlagene Verbindung
+  //Verbindung zur Datenbank wird hergestellt
+  .connect(uri)
+  //Meldung für erfolgreiche Verbindung
+  .then(() => console.log("Mit MongoDB verbunden."))
+  //Meldung für user + Error der ausgelöst wurde, für uns zum troubleshooten
+  .catch((error) => console.error("Fehler beim Verbinden mit MongoDB:", error));
 
-app.use(cors()); //Cors wird genutzt um Anfragen von jeder Domain in der Express App zu erlauben. Für Entwicklungs-Zwecke. Würde man produktiv nicht so machen.
-app.use(express.json()); //Express.JSON ermöglicht das verarbeiten von einkommenden JSON Request Bodies
+//Cors wird genutzt. Da keine Parameter definiert, sind Anfragen von allen Domains erlaubt. In Kontext eines Schulprojekts sinnvoll.
+app.use(cors());
+//Express.JSON ermöglicht das verarbeiten von einkommenden JSON Request Bodies
+app.use(express.json());
 
+//Prüft ob Server läuft.
 app.listen(port, () => {
-  //Achtet auf einkommende HTTP Connections auf diesem Port...
-  console.log(`Beispiel-App läuft auf http://localhost:${port}`); //...und schickt diese Nachricht einmalig, beim Serverstart. Fungiert essenziell als unser Test ob der Server läuft.
+  console.log(`Beispiel-App läuft auf http://localhost:${port}`);
 });
 
+//Wenn jemand eine Request auf "http://localhost:3000/" macht...
 app.get("/", (req, res) => {
-  //Wenn jemand eine Request auf "/" macht...
-  res.json({ message: "Server läuft korrekt." }); //...schick diese Nachricht zurück
+  //...wird diese Nachricht zurückgeschickt. Prüft ob Server Anfragen empfangen und darauf Antworten kann.
+  res.json({ message: "Server läuft korrekt." });
 });
 
 //GET all Routehandler für Anzeigen des gesamten Produktkatalogs
 app.get(`/api/products`, async (req, res) => {
-  //Zieht alle dokumente von der "products" Mongoose Collection
   try {
-    const products = await product.find(); //Wartet bis DB-Abfrage durchgeführt wurde, damit alle Produkte in Konstante gespeichert werden.
-    res.json(products); //Gibt Antworten der DB Anfrage zurück an das Frontend
+    //Wartet bis DB-Abfrage durchgeführt wurde, damit alle Produkte in Konstante gespeichert werden.
+    const products = await product.find();
+    //Gibt Antworten der DB Anfrage zurück an das Frontend
+    res.json(products);
   } catch (error) {
-    //Status 500 steht für "Internal Server Error". Macht hier am meisten Sinn, da die Anfrage eigentlich nur fehlschlagen kann, wenn der Server ein Problem hat.
-    res.status(500).json({ error: "Fehler beim Laden der Daten!" }); //Gibt bei Problemen eine Fehlermeldung aus
+    //Error wird in Konsole ausgegeben
+    console.error(error);
+    //Statuscode 500 steht für "Internal Server Error". Wird hier angewendet, da es praktisch nur serverseitig fehlschlagen kann.
+    res.status(500).json({ error: "Fehler beim Laden der Daten!" });
   }
 });
 
 //GET Routehandler für Suchen von Produkten
 app.get(`/api/products/search`, async (req, res) => {
   try {
-    const searchTerm = req.query.name; //Füllt Konstante mit Suchanfrage des Users ab
+    //Füllt Konstante mit Suchanfrage des Users ab
+    const searchTerm = req.query.name;
 
     //Prüft ob Suchtext leer ist. Retourniert alle Produkte wenn true.
     if (!searchTerm || searchTerm.trim() === "") {
@@ -55,7 +78,7 @@ app.get(`/api/products/search`, async (req, res) => {
 
     //Füllt das Resultat einer MongoDB Suche, anhand der User-Eingabe, in eine Konstante ab
     const results = await product.find({
-      //Hierbei handelt es sich um MongoDB-Syntax
+      //Hierbei handelt es sich um MongoDB-Syntax. Diese stellt sicher, dass die Suchanfrage sowohl im Produktnamen, als auch der Beschreibung durchgeführt wird.
       $or: [
         { productName: { $regex: searchTerm, $options: "i" } },
         { description: { $regex: searchTerm, $options: "i" } },
@@ -64,6 +87,7 @@ app.get(`/api/products/search`, async (req, res) => {
 
     res.json(results);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Fehler bei der Suche!" });
   }
 });
@@ -71,16 +95,18 @@ app.get(`/api/products/search`, async (req, res) => {
 //GET by ID Routehandler für das Abrufen einzelner Produkte
 app.get(`/api/products/:id`, async (req, res) => {
   try {
-    const oneProduct = await product.findById(req.params.id); //Füllt Resultat der Suche per ID in Konstante ab
+    //Füllt Resultat der Suche per ID in Konstante ab
+    const oneProduct = await product.findById(req.params.id);
 
+    //Falls Produkt-ID nicht gefunden wurde, wird Fehlermeldung ausgegeben
     if (!oneProduct) {
-      //Falls Produkt-ID nicht gefunden wurde, wird Fehlermeldung ausgegeben
+      //Statuscode 404 steht für "Das angefragte Objekt konnte nicht gefunden werden"
       return res.status(404).json({ error: "Produkt nicht gefunden!" });
     }
 
     res.json(oneProduct);
   } catch (error) {
-    //Falls Serverseitig etwas schiefläuft, wird eine Fehlermeldung ausgegeben
+    console.error(error);
     res.status(500).json({ error: "Fehler beim Laden des Produkts!" });
   }
 });
@@ -88,12 +114,20 @@ app.get(`/api/products/:id`, async (req, res) => {
 //POST Routehandler für die Registration eines neuen Users
 app.post(`/api/users`, async (req, res) => {
   try {
-    const newUser = await user.create(req.body); //Erstellt ein Dokument in der "users" MongoDB Collection
-    //Gibt Statuscode 201 zurück (Created successfully)
+    //Erstellt ein Dokument in der "users" MongoDB Collection
+    const newUser = await user.create(req.body);
+    //Statuscode 201 steht für "Anfrage war erfolgreich und neue Ressource wurde erstellt"
     res.status(201).json(newUser);
   } catch (error) {
-    //Falls User eingabe macht, die nicht mit dem Schema übereinstimmt, wird Statuscode 400 für fehlende/falsche Angaben ausgegeben und Fehlermeldung was nicht stimmt
-    res.status(400).json({ error: error.message });
+    //Prüfen ob Error auf Eingaben des Users zurückzuführen ist, z. B. wenn Eingaben nicht mit Schema übereinstimmen.
+    if (error.name === "ValidationError") {
+      /*Statuscode 400 steht für "Fehlende oder falsche Angaben". 
+      Mit error.message wird der genaue Errortext ausgegeben, wo ersichtlich ist, welche Angabe nicht stimmt.*/
+      res.status(400).json({ error: error.message });
+    } else {
+      console.error(error);
+      res.status(500).json({ error: "Fehler beim Erstellen des Nutzers!" });
+    }
   }
 });
 
@@ -102,25 +136,33 @@ app.put(`/api/users/:id`, async (req, res) => {
   try {
     //Selektiert User anhand ID und übergibt aktualisierte Werte an DB. Aktualisierte Werte werden in Konstante gespeichert.
     const updatedUser = await user.findByIdAndUpdate(req.params.id, req.body, {
-      new: true, //Übergibt das aktualisierte Dokument
-      runValidators: true, //Validiert ob Werte mit Schema übereinstimmen
+      //Übergibt das aktualisierte Dokument
+      new: true,
+      //Validiert ob Werte mit Schema übereinstimmen
+      runValidators: true,
     });
 
-    //Prüft ob User gefunden wurde..
+    //Prüft ob Konstante undefined ist, was bedeuten würde, dass User nicht gefunden wurde.
     if (!updatedUser) {
-      //..und gibt sonst Statuscode 404 zurück (Objekt wurde nicht gefunden)
+      //Mit return wird aus der Funktion ausgetreten
       return res.status(404).json({ error: "Nutzer nicht gefunden!" });
     }
 
     res.json(updatedUser);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    if (error.name === "ValidationError") {
+      res.status(400).json({ error: error.message });
+    } else {
+      console.error(error);
+      res.status(500).json({ error: "Fehler beim Mutieren des Nutzers!" });
+    }
   }
 });
 
 //DELETE Route handler für Löschen von Nutzern
 app.delete(`/api/users/:id`, async (req, res) => {
   try {
+    //Selektiert User anhand ID und löscht diesen aus DB. Resultat wird in Konstante abgefüllt.
     const deletedUser = await user.findByIdAndDelete(req.params.id);
 
     if (!deletedUser) {
@@ -129,7 +171,7 @@ app.delete(`/api/users/:id`, async (req, res) => {
 
     //Löscht alle Bestellungen, die mit diesem Nutzer verknüpft sind
     await order.deleteMany({ user: req.params.id });
-    //Statuscode 200 wird retourniert (Mutation erfolgreich durchgeführt)
+    //Statuscode 200 steht für "Anfrage war erfolgreich"
     res.status(200).json({
       message: "Nutzer und zugehörige Bestellungen erfolgreich gelöscht.",
     });
@@ -142,19 +184,21 @@ app.delete(`/api/users/:id`, async (req, res) => {
 //POST Route handler für Login
 app.post(`/api/login`, async (req, res) => {
   try {
-    //Zieht mittels destructuring das Passwort und den Benutzernamen aus dem Request Body
+    //Zieht mittels destructuring das Passwort und den Benutzernamen aus dem Request Body und füllt diese in Konstante ab
     const { userName, password } = req.body;
-
-    //Sucht User anhand Username
+    //Sucht User anhand Username und füllt Resultat in Konstante ab.
     const foundUser = await user.findOne({ userName });
+
     if (!foundUser) {
+      //Statuscode 401 steht für "Unautherized". Wird genutzt wenn Credentials falsch sind oder fehlen
       return res
-        .status(401) //Statuscode für "Unautherized". Kann genutzt werden wenn Credentials falsch sind oder fehlen
+        .status(401)
         .json({ error: "Ungültiger Username oder Passwort!" });
     }
 
     //Eingegebens Passwort wird gehasht und mit hinterlegtem, gehashten Passwort verglichen
     const passwordMatches = await bcrypt.compare(password, foundUser.password);
+
     if (!passwordMatches) {
       return res
         .status(401)
@@ -181,28 +225,27 @@ app.post(`/api/login`, async (req, res) => {
 //GET Routehandler um alle Bestellung eines Nutzers abzurufen
 app.get(`/api/users/:id/orders`, async (req, res) => {
   try {
+    //Id des Users wird abgerufen und in Konstante abgefüllt.
     const userId = req.params.id;
 
-    //Zieht alle Bestellungen die unter dieser User Id getätigt wurden
+    //Zieht alle Bestellungen die unter dieser User Id getätigt wurden und füllt diese in Konstante ab.
     const userOrders = await order.find({ user: userId }).populate("product");
 
     res.json(userOrders);
   } catch (error) {
-    console.error("Error fetching user orders:", error);
-    res
-      .status(500)
-      .json({ error: "Fehler beim Laden der Benutzerbestellungen!" });
+    console.error(error);
+    res.status(500).json({ error: "Fehler beim Laden der Bestellungen!" });
   }
 });
 
 //POST Route handler für neue Bestellungen
 app.post(`/api/orders`, async (req, res) => {
   try {
-    //Erstellt ein Dokument in der "orders" MongoDB Collection
     const newOrder = await order.create(req.body);
     res.status(201).json(newOrder);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: "Fehler beim Aufgeben der Bestellung!" });
   }
 });
 
@@ -217,12 +260,15 @@ app.put(`/api/orders/:id`, async (req, res) => {
         runValidators: true,
       },
     );
+
     if (!updatedOrder) {
       return res.status(404).json({ error: "Bestellung nicht gefunden!" });
     }
+
     res.json(updatedOrder);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: "Fehler beim Mutieren der Bestellung!" });
   }
 });
 
@@ -230,9 +276,11 @@ app.put(`/api/orders/:id`, async (req, res) => {
 app.delete(`/api/orders/:id`, async (req, res) => {
   try {
     const deletedOrder = await order.findByIdAndDelete(req.params.id);
+
     if (!deletedOrder) {
       return res.status(404).json({ error: "Bestellung nicht gefunden!" });
     }
+
     res.status(200).json({ message: "Bestellung erfolgreich storniert." });
   } catch (error) {
     console.error(error);
