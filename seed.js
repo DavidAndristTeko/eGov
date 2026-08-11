@@ -1,12 +1,18 @@
-import "dotenv/config"; //Importiert Umgebungsvariabeln aus .env Datei
-import mongoose from "mongoose"; //Importiert Mongoose ODM Framework
-import User from "./models/user.js"; //Importiert User-Modell
-import Product from "./models/product.js"; //Importiert Product-Modell
-import Order from "./models/order.js"; //Importiert Order-Modell
+//Importiert Umgebungsvariabeln aus .env Datei
+import "dotenv/config";
+//Importiert Mongoose ODM Framework
+import mongoose from "mongoose";
+//Importiert Product-Modell
+import product from "./models/product.js";
+// Importiert User-Modell
+import user from "./models/user.js";
+// Importiert Bestellung-Modell
+import order from "./models/order.js";
 
-const uri = process.env.MONGODB_URI; //Speichert Umgebungsvariable aus .env Datei in Konstante
+//Speichert Umgebungsvariable für MongoDB-URI aus .env Datei in Konstante
+const uri = process.env.MONGODB_URI;
 
-//Prüft ob uri Variable undefined ist, gibt error aus, falls dies der Fall ist und Beendet das node.js programm
+//Prüft ob Konstante undefined ist, gibt error aus, falls dies der Fall ist und Beendet das node.js programm
 if (!uri) {
   console.error(
     "Keine MongoDB-URI gefunden. MONGODB_URI muss in der .env-Datei korrekt vorhanden sein.",
@@ -26,6 +32,7 @@ async function seed() {
       Product.deleteMany({}),
       Order.deleteMany({}),
     ]);
+
     //...neue Testdaten zu erstellen...
     const users = await User.create([
       {
@@ -86,12 +93,17 @@ async function seed() {
         orderStatus: 3,
       },
     ]);
+
     //...gibt aus, ob erfolgreich oder nicht. Zuletzt wird die Db-Verbindung getrennt.
     console.log("Seed-Daten erfolgreich angelegt.");
   } catch (error) {
     console.error("Fehler beim Seeding:", error);
   } finally {
+    //Folgendes wird ausgeführt, unabhängig ob Try erfolgreich war
+
+    //Es wird gewartet bis Verbindung zur DB geschlossen wurde
     await mongoose.disconnect();
+    //Meldung wird ausgegeben
     console.log("Datenbankverbindung getrennt.");
   }
 }
