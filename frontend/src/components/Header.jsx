@@ -16,6 +16,9 @@ export default function Header() {
       <nav style={{ display: "flex", gap: "1rem" }}>
         <Link to="/">Home</Link>
         <Link to="/products">Produkte</Link>
+        <Link to="/cart">Warenkorb</Link>
+        <Link to="/orders">Meine Bestellungen</Link>
+        <Link to="/register">Registrieren</Link>
         {token ? (
           <button onClick={handleLogout}>Logout</button>
         ) : (

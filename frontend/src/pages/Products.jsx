@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import api from "../api/apiClient";
+import useStore from "../store/useStore";
 
 async function fetchProducts() {
   const res = await api.get("/api/products");
@@ -14,6 +15,7 @@ function ProductSkeleton() {
 
 export default function Products() {
   const { data, isLoading, error } = useQuery(["products"], fetchProducts);
+  const addToCart = useStore((s) => s.addToCart);
 
   if (isLoading)
     return (
@@ -34,8 +36,23 @@ export default function Products() {
       <h1>Produkte</h1>
       <ul>
         {data?.map((p) => (
-          <li key={p._id}>
+          <li
+            key={p._id}
+            style={{ display: "flex", gap: "1rem", alignItems: "center" }}
+          >
             <Link to={`/products/${p._id}`}>{p.productName}</Link>
+            <span>— {p.price ?? "—"} €</span>
+            <button
+              onClick={() =>
+                addToCart({
+                  productId: p._id,
+                  productName: p.productName,
+                  price: p.price ?? 0,
+                })
+              }
+            >
+              In den Warenkorb
+            </button>
           </li>
         ))}
       </ul>
