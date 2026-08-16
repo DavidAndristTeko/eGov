@@ -12,18 +12,65 @@ export default function Header() {
   };
 
   return (
-    <header style={{ padding: "1rem", background: "#fff" }}>
-      <nav style={{ display: "flex", gap: "1rem" }}>
-        <Link to="/">Home</Link>
-        <Link to="/products">Produkte</Link>
-        <Link to="/cart">Warenkorb</Link>
-        <Link to="/orders">Meine Bestellungen</Link>
-        <Link to="/register">Registrieren</Link>
-        {token ? (
-          <button onClick={handleLogout}>Logout</button>
-        ) : (
-          <Link to="/login">Login</Link>
-        )}
+    <header className="bg-white shadow-md border-b border-slate-200">
+      <nav className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-center gap-6 flex-wrap">
+          <Link
+            to="/"
+            className="font-bold text-lg text-blue-600 hover:text-blue-800 transition"
+          >
+            eGov
+          </Link>
+          <Link
+            to="/"
+            className="text-slate-700 hover:text-blue-600 transition"
+          >
+            Home
+          </Link>
+          <Link
+            to="/products"
+            className="text-slate-700 hover:text-blue-600 transition"
+          >
+            Produkte
+          </Link>
+          <Link
+            to="/cart"
+            className="text-slate-700 hover:text-blue-600 transition"
+          >
+            Warenkorb
+          </Link>
+          <Link
+            to="/orders"
+            className="text-slate-700 hover:text-blue-600 transition"
+          >
+            Meine Bestellungen
+          </Link>
+        </div>
+        <div className="flex items-center gap-3">
+          {!token && (
+            <Link
+              to="/register"
+              className="px-4 py-2 text-slate-700 hover:text-blue-600 transition"
+            >
+              Registrieren
+            </Link>
+          )}
+          {token ? (
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-medium"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+            >
+              Login
+            </Link>
+          )}
+        </div>
       </nav>
     </header>
   );
