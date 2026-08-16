@@ -4,8 +4,9 @@ import { isAuthenticated } from "../auth/auth";
 
 export default function ProtectedRoute({ children }) {
   if (!isAuthenticated()) {
-    return <Navigate to="/login" replace />;
+    // User eingeloggt?
+    return <Navigate to="/login" replace />; // Wenn nicht -> redirect zu login, replace sorgt dafür dass die alte Route nicht in der Browser History bleibt
   }
 
-  return children;
+  return children; // Wenn eingeloggt wird die Seite angezeigt (Z.B. Products.jsx)
 }

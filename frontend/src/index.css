@@ -1,3 +1,5 @@
+/*globale Styles sind hier, pro Komponente können wir später eigene CSS Dateien ergänzen*/
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
