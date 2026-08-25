@@ -6,6 +6,7 @@ const orderSchema = new Schema({
   orderId: { type: Number, required: true, unique: true },
   product: { type: Schema.Types.ObjectId, ref: "Product", required: true },
   user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  orderDetails: { type: Schema.Types.Mixed },
   orderDate: {
     type: Date,
     required: [true, "Bestellungsdatum fehlt"],
