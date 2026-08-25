@@ -12,34 +12,7 @@ export default function Footer() {
             Eine moderne E-Government Lösung
           </p>
         </div>
-        <nav aria-label="Footer-Navigation">
-          <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#e3e3cd]">
-            <li>
-              <a
-                href="/"
-                className="transition-colors hover:text-[#df6747] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#df6747]"
-              >
-                Home
-              </a>
-            </li>
-            <li>
-              <a
-                href="/products"
-                className="transition-colors hover:text-[#df6747] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#df6747]"
-              >
-                Produkte
-              </a>
-            </li>
-            <li>
-              <a
-                href="/orders"
-                className="transition-colors hover:text-[#df6747] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#df6747]"
-              >
-                Bestellungen
-              </a>
-            </li>
-          </ul>
-        </nav>
+        <p className="text-sm text-[#e3e3cd]">David Andrist & Maëlle Esch</p>
       </div>
     </footer>
   );
