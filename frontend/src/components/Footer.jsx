@@ -2,61 +2,44 @@ import React from "react";
 
 export default function Footer() {
   return (
-    <footer className="bg-slate-800 text-white py-8 mt-12 border-t border-slate-700">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+    <footer className="mt-12 border-t-2 border-[#b42f32] bg-[#49494d] text-[#e3e3cd]">
+      <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-6 sm:flex-row sm:items-center sm:justify-between">
+        <div>
           <div>
-            <h3 className="font-bold text-lg mb-3">eGov</h3>
-            <p className="text-slate-400 text-sm">
-              Eine moderne E-Government Lösung
-            </p>
+            <h3 className="text-lg font-semibold tracking-tight">eGov</h3>
           </div>
-          <div>
-            <h4 className="font-semibold mb-3">Navigation</h4>
-            <ul className="text-slate-400 text-sm space-y-2">
-              <li>
-                <a href="/" className="hover:text-white transition">
-                  Home
-                </a>
-              </li>
-              <li>
-                <a href="/products" className="hover:text-white transition">
-                  Produkte
-                </a>
-              </li>
-              <li>
-                <a href="/orders" className="hover:text-white transition">
-                  Bestellungen
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold mb-3">Info</h4>
-            <ul className="text-slate-400 text-sm space-y-2">
-              <li>
-                <a href="#" className="hover:text-white transition">
-                  Datenschutz
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition">
-                  Impressum
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition">
-                  Kontakt
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="border-t border-slate-700 pt-6 text-center text-slate-400 text-sm">
-          <p>
-            © {new Date().getFullYear()} eGov Demo. Alle Rechte vorbehalten.
+          <p className="mt-1 text-sm text-[#878d92]">
+            Eine moderne E-Government Lösung
           </p>
         </div>
+        <nav aria-label="Footer-Navigation">
+          <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#e3e3cd]">
+            <li>
+              <a
+                href="/"
+                className="transition-colors hover:text-[#df6747] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#df6747]"
+              >
+                Home
+              </a>
+            </li>
+            <li>
+              <a
+                href="/products"
+                className="transition-colors hover:text-[#df6747] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#df6747]"
+              >
+                Produkte
+              </a>
+            </li>
+            <li>
+              <a
+                href="/orders"
+                className="transition-colors hover:text-[#df6747] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#df6747]"
+              >
+                Bestellungen
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
     </footer>
   );

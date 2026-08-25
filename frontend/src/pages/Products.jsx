@@ -17,10 +17,10 @@ async function fetchProducts({ queryKey }) {
 
 function ProductSkeleton() {
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 animate-pulse">
-      <div className="h-6 bg-slate-200 rounded mb-4"></div>
-      <div className="h-4 bg-slate-200 rounded mb-4 w-2/3"></div>
-      <div className="h-10 bg-slate-200 rounded"></div>
+    <div className="animate-pulse border border-[#878d92]/40 bg-[#e3e3cd] p-6">
+      <div className="mb-4 h-6 rounded-sm bg-[#878d92]/30"></div>
+      <div className="mb-4 h-4 w-2/3 rounded-sm bg-[#878d92]/30"></div>
+      <div className="h-10 rounded-sm bg-[#878d92]/30"></div>
     </div>
   );
 }
@@ -87,8 +87,8 @@ export default function Products() {
 
   if (isLoading) {
     return (
-      <section className="max-w-6xl mx-auto py-12 px-4">
-        <h1 className="text-3xl font-bold mb-8">Produkte</h1>
+      <section className="mx-auto max-w-6xl px-4 py-12">
+        <h1 className="mb-8 text-3xl font-bold text-[#49494d]">Produkte</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <ProductSkeleton />
           <ProductSkeleton />
@@ -102,7 +102,7 @@ export default function Products() {
     return (
       <section className="max-w-6xl mx-auto py-12 px-4">
         <h1 className="text-3xl font-bold mb-8">Produkte</h1>
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-6">
+        <div className="border border-[#b42f32]/30 bg-[#b42f32]/10 p-6 text-[#b42f32]">
           {error.response?.data?.error ||
             error.userMessage ||
             "Die Produkte konnten nicht geladen werden."}
@@ -112,10 +112,10 @@ export default function Products() {
   }
 
   return (
-    <section className="max-w-6xl mx-auto py-12 px-4">
-      <h1 className="text-3xl font-bold mb-8">Produkte</h1>
+    <section className="mx-auto max-w-6xl px-4 py-12">
+      <h1 className="mb-8 text-3xl font-bold text-[#49494d]">Produkte</h1>
       {orderErrorMessage && (
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-6 mb-6">
+        <div className="mb-6 border border-[#b42f32]/30 bg-[#b42f32]/10 p-6 text-[#b42f32]">
           {orderErrorMessage}{" "}
           <Link to="/login" className="font-medium underline">
             Zum Login
@@ -123,10 +123,10 @@ export default function Products() {
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+      <div className="mb-8 border border-[#878d92]/40 bg-[#f4f3e8] p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <label className="lg:col-span-2">
-            <span className="block text-sm font-medium text-slate-700 mb-2">
+            <span className="mb-2 block text-sm font-medium text-[#49494d]">
               Suche
             </span>
             <input
@@ -135,12 +135,12 @@ export default function Products() {
               onChange={updateFilter}
               type="search"
               placeholder="Name oder Beschreibung"
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              className="w-full border border-[#878d92] bg-[#e3e3cd] px-4 py-2 text-[#49494d] focus:outline-none focus:ring-2 focus:ring-[#df6747]"
             />
           </label>
           <div className="grid grid-cols-2 gap-2">
             <label>
-              <span className="block text-sm font-medium text-slate-700 mb-2">
+              <span className="mb-2 block text-sm font-medium text-[#49494d]">
                 Preis ab
               </span>
               <input
@@ -151,11 +151,11 @@ export default function Products() {
                 min="0"
                 step="0.01"
                 placeholder="0"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className="w-full border border-[#878d92] bg-[#e3e3cd] px-3 py-2 text-[#49494d] focus:outline-none focus:ring-2 focus:ring-[#df6747]"
               />
             </label>
             <label>
-              <span className="block text-sm font-medium text-slate-700 mb-2">
+              <span className="mb-2 block text-sm font-medium text-[#49494d]">
                 Preis bis
               </span>
               <input
@@ -166,20 +166,20 @@ export default function Products() {
                 min="0"
                 step="0.01"
                 placeholder="9999"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className="w-full border border-[#878d92] bg-[#e3e3cd] px-3 py-2 text-[#49494d] focus:outline-none focus:ring-2 focus:ring-[#df6747]"
               />
             </label>
           </div>
         </div>
         <div className="mt-4 flex items-center justify-between gap-4 flex-wrap">
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-[#878d92]">
             {filteredProducts.length} Produkt
             {filteredProducts.length === 1 ? "" : "e"} gefunden
           </p>
           <button
             type="button"
             onClick={resetFilters}
-            className="px-4 py-2 bg-slate-200 text-slate-900 rounded-lg hover:bg-slate-300 transition font-medium text-sm"
+            className="rounded-sm border border-[#878d92] px-4 py-2 text-sm font-medium text-[#49494d] transition-colors hover:bg-[#878d92]/20"
           >
             Filter zurücksetzen
           </button>
@@ -187,7 +187,7 @@ export default function Products() {
       </div>
 
       {filteredProducts.length === 0 ? (
-        <div className="bg-blue-50 border border-blue-200 text-blue-700 rounded-lg p-6 text-center">
+        <div className="border border-[#df6747]/40 bg-[#df6747]/10 p-6 text-center text-[#49494d]">
           Keine Produkte für diese Suche oder Filter gefunden.
         </div>
       ) : (
@@ -195,23 +195,25 @@ export default function Products() {
           {filteredProducts.map((p) => (
             <div
               key={p._id}
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition h-full flex flex-col"
+              className="flex h-full flex-col overflow-hidden border border-[#878d92]/40 bg-[#e3e3cd] transition-shadow hover:shadow-[0_8px_24px_rgba(73,73,77,0.16)]"
             >
-              <div className="bg-gradient-to-r from-blue-500 to-blue-600 h-32 flex items-center justify-center">
-                <div className="text-4xl">📦</div>
+              <div className="flex h-32 items-center justify-center bg-[#878d92] px-5 text-center">
+                <div className="text-lg font-semibold tracking-tight text-[#e3e3cd]">
+                  {p.productName}
+                </div>
               </div>
               <div className="p-6 flex flex-col flex-1">
                 <Link
                   to={`/products/${p._id}`}
-                  className="text-xl font-bold text-slate-900 hover:text-blue-600 transition block mb-2 min-h-[3.5rem] line-clamp-2"
+                  className="mb-2 block min-h-[3.5rem] text-xl font-bold text-[#49494d] transition-colors hover:text-[#b42f32] line-clamp-2"
                 >
                   {p.productName}
                 </Link>
-                <p className="text-slate-600 text-sm mb-4 min-h-[3rem] line-clamp-2">
+                <p className="mb-4 min-h-[3rem] text-sm text-[#878d92] line-clamp-2">
                   {p.description || "Keine Beschreibung verfügbar"}
                 </p>
                 <div className="flex items-center justify-between min-h-[2.5rem]">
-                  <span className="text-2xl font-bold text-blue-600">
+                  <span className="text-2xl font-bold text-[#49494d]">
                     {(p.price ?? 0).toFixed(2)} €
                   </span>
                 </div>
@@ -219,13 +221,13 @@ export default function Products() {
                   <button
                     onClick={() => orderMutation.mutate(p)}
                     disabled={orderMutation.isLoading}
-                    className="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium text-sm"
+                    className="flex-1 rounded-sm bg-[#b42f32] py-2 text-sm font-medium text-[#e3e3cd] transition-colors hover:bg-[#8f2528]"
                   >
                     Direkt bestellen
                   </button>
                   <Link
                     to={`/products/${p._id}`}
-                    className="px-4 py-2 bg-slate-200 text-slate-900 rounded-lg hover:bg-slate-300 transition font-medium text-sm"
+                    className="rounded-sm border border-[#878d92] px-4 py-2 text-sm font-medium text-[#49494d] transition-colors hover:bg-[#878d92]/20"
                   >
                     Details
                   </Link>

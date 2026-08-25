@@ -70,16 +70,16 @@ export default function Account() {
   }
 
   return (
-    <section className="max-w-md mx-auto py-12 px-4">
-      <div className="bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-3xl font-bold mb-6 text-slate-900">Mein Konto</h1>
+    <section className="mx-auto max-w-md px-4 py-12">
+      <div className="border border-[#878d92]/40 bg-[#e3e3cd] p-8">
+        <h1 className="mb-6 text-3xl font-bold text-[#49494d]">Mein Konto</h1>
         {message && (
-          <div className="mb-4 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg">
+          <div className="mb-4 border border-[#878d92]/40 bg-[#878d92]/15 p-4 text-[#49494d]">
             {message}
           </div>
         )}
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+          <div className="mb-4 border border-[#b42f32]/30 bg-[#b42f32]/10 p-4 text-[#b42f32]">
             {error}
           </div>
         )}
@@ -92,7 +92,7 @@ export default function Account() {
             ["password", "Neues Passwort (optional)", "password"],
           ].map(([name, label, type]) => (
             <label key={name} className="block">
-              <span className="block text-sm font-medium text-slate-700 mb-2">
+              <span className="mb-2 block text-sm font-medium text-[#49494d]">
                 {label}
               </span>
               <input
@@ -102,31 +102,31 @@ export default function Account() {
                 onChange={handleChange}
                 required={name !== "password"}
                 minLength={name === "password" ? 8 : 2}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className="w-full border border-[#878d92] bg-[#e3e3cd] px-4 py-2 text-[#49494d] focus:outline-none focus:ring-2 focus:ring-[#df6747]"
               />
             </label>
           ))}
           <button
             type="submit"
             disabled={isSaving || isDeleting}
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            className="w-full rounded-sm bg-[#b42f32] px-4 py-2 font-medium text-[#e3e3cd] transition-colors hover:bg-[#8f2528] disabled:opacity-50"
           >
             {isSaving ? "Wird gespeichert..." : "Änderungen speichern"}
           </button>
         </form>
 
-        <div className="border-t border-slate-200 mt-8 pt-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-2">
+        <div className="mt-8 border-t border-[#878d92]/50 pt-6">
+          <h2 className="mb-2 text-lg font-semibold text-[#49494d]">
             Konto löschen
           </h2>
-          <p className="text-sm text-slate-600 mb-4">
+          <p className="mb-4 text-sm text-[#878d92]">
             Dabei werden auch Ihre Bestellungen gelöscht.
           </p>
           <button
             type="button"
             onClick={handleDelete}
             disabled={isSaving || isDeleting}
-            className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+            className="w-full rounded-sm bg-[#49494d] px-4 py-2 font-medium text-[#e3e3cd] transition-colors hover:bg-[#b42f32] disabled:opacity-50"
           >
             {isDeleting ? "Konto wird gelöscht..." : "Konto endgültig löschen"}
           </button>

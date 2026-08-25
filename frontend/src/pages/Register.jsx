@@ -62,98 +62,98 @@ export default function Register() {
   };
 
   return (
-    <section className="max-w-md mx-auto py-12 px-4">
-      <div className="bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-3xl font-bold mb-6 text-center text-slate-900">
+    <section className="mx-auto max-w-md px-4 py-12">
+      <div className="border border-[#878d92]/40 bg-[#e3e3cd] p-8">
+        <h1 className="mb-6 text-center text-3xl font-bold text-[#49494d]">
           Registrieren
         </h1>
 
         {serverError && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+          <div className="mb-4 border border-[#b42f32]/30 bg-[#b42f32]/10 p-4 text-[#b42f32]">
             {serverError}
           </div>
         )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Vorname <span className="text-red-600">*</span>
+            <label className="mb-2 block text-sm font-medium text-[#49494d]">
+              Vorname <span className="text-[#b42f32]">*</span>
             </label>
             <input
               {...register("firstname")}
               required
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              className="w-full border border-[#878d92] bg-[#e3e3cd] px-4 py-2 text-[#49494d] focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#df6747]"
               placeholder="Geben Sie Ihren Vornamen ein"
             />
             {errors.firstname && (
-              <small className="text-red-600 block mt-1">
+              <small className="mt-1 block text-[#b42f32]">
                 {errors.firstname.message}
               </small>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Nachname <span className="text-red-600">*</span>
+            <label className="mb-2 block text-sm font-medium text-[#49494d]">
+              Nachname <span className="text-[#b42f32]">*</span>
             </label>
             <input
               {...register("lastname")}
               required
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              className="w-full border border-[#878d92] bg-[#e3e3cd] px-4 py-2 text-[#49494d] focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#df6747]"
               placeholder="Geben Sie Ihren Nachnamen ein"
             />
             {errors.lastname && (
-              <small className="text-red-600 block mt-1">
+              <small className="mt-1 block text-[#b42f32]">
                 {errors.lastname.message}
               </small>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="mb-2 block text-sm font-medium text-[#49494d]">
               Username
             </label>
             <input
               {...register("userName")}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              className="w-full border border-[#878d92] bg-[#e3e3cd] px-4 py-2 text-[#49494d] focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#df6747]"
               placeholder="Wählen Sie einen Username"
             />
             {errors.userName && (
-              <small className="text-red-600 block mt-1">
+              <small className="mt-1 block text-[#b42f32]">
                 {errors.userName.message}
               </small>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="mb-2 block text-sm font-medium text-[#49494d]">
               Passwort (min. 8 Zeichen)
             </label>
             <input
               type="password"
               {...register("password")}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              className="w-full border border-[#878d92] bg-[#e3e3cd] px-4 py-2 text-[#49494d] focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#df6747]"
               placeholder="Wählen Sie ein sicheres Passwort"
             />
             {errors.password && (
-              <small className="text-red-600 block mt-1">
+              <small className="mt-1 block text-[#b42f32]">
                 {errors.password.message}
               </small>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="mb-2 block text-sm font-medium text-[#49494d]">
               Passwort wiederholen
             </label>
             <input
               type="password"
               {...register("passwordConfirm")}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              className="w-full border border-[#878d92] bg-[#e3e3cd] px-4 py-2 text-[#49494d] focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#df6747]"
               placeholder="Wiederholen Sie Ihr Passwort"
             />
             {errors.passwordConfirm && (
-              <small className="text-red-600 block mt-1">
+              <small className="mt-1 block text-[#b42f32]">
                 {errors.passwordConfirm.message}
               </small>
             )}
@@ -162,17 +162,17 @@ export default function Register() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full rounded-sm bg-[#b42f32] py-2 font-medium text-[#e3e3cd] transition-colors hover:bg-[#8f2528] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLoading ? "Wird registriert..." : "Registrieren"}
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-slate-600">
+        <div className="mt-6 text-center text-sm text-[#878d92]">
           Haben Sie bereits ein Konto?{" "}
           <a
             href="/login"
-            className="text-blue-600 hover:text-blue-800 font-medium"
+            className="font-medium text-[#b42f32] hover:text-[#df6747]"
           >
             Zum Login
           </a>

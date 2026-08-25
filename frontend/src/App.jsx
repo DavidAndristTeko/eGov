@@ -21,7 +21,7 @@ export default function App() {
     <div className="app-root">
       <Header />{" "}
       {/*Kein schliessendes Tag nötig, da kurzform (Header hat keinen Inhalt), selbstschliessende JSX-Syntax*/}
-      <main>
+      <main className="flex-1">
         <Routes>
           {" "}
           {/*Wegweiser fürs Forntend, Wenn die URL X ist, zeige Komponente Y*/}
