@@ -157,6 +157,22 @@ export default function Orders() {
                 </div>
               </div>
 
+              {o.orderDetails && Object.keys(o.orderDetails).length > 0 && (
+                <div className="mb-6 border-t border-[#878d92]/40 pt-4">
+                  <p className="mb-2 text-sm text-[#878d92]">
+                    Angaben zum Gesuch
+                  </p>
+                  <dl className="grid grid-cols-1 gap-2 text-sm md:grid-cols-2">
+                    {Object.entries(o.orderDetails).map(([key, value]) => (
+                      <div key={key}>
+                        <dt className="text-[#878d92]">{key}</dt>
+                        <dd className="text-[#49494d]">{value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              )}
+
               {o.orderStatus !== 3 && (
                 <div className="flex gap-3">
                   <button

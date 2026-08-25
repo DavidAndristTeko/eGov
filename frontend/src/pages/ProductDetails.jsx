@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api/apiClient";
 import useStore from "../store/useStore";
+import OrderFormModal, { needsOrderForm } from "../components/OrderFormModal";
 
 async function fetchProduct(id) {
   const res = await api.get(`/api/products/${id}`);
@@ -10,6 +11,7 @@ async function fetchProduct(id) {
 }
 
 export default function ProductDetails() {
+  const [showOrderForm, setShowOrderForm] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
   const { data, isLoading, error } = useQuery(
@@ -22,12 +24,13 @@ export default function ProductDetails() {
   const user = useStore((s) => s.user);
   const queryClient = useQueryClient();
   const orderMutation = useMutation(
-    () =>
+    (details = {}) =>
       api.post("/api/orders", {
         orderId: Date.now(),
         product: data._id,
         user: user.id,
         orderStatus: 1,
+        orderDetails: details,
       }),
     {
       onSuccess: () => {
@@ -36,6 +39,14 @@ export default function ProductDetails() {
       },
     },
   );
+
+  function orderProduct(details = {}) {
+    if (needsOrderForm(data.productName) && Object.keys(details).length === 0) {
+      setShowOrderForm(true);
+      return;
+    }
+    orderMutation.mutate(details);
+  }
 
   if (isLoading) {
     return (
@@ -114,7 +125,7 @@ export default function ProductDetails() {
 
           <div className="flex gap-4 flex-wrap">
             <button
-              onClick={() => orderMutation.mutate()}
+              onClick={() => orderProduct()}
               disabled={orderMutation.isLoading}
               className="rounded-sm bg-[#b42f32] px-8 py-3 text-lg font-semibold text-[#e3e3cd] transition-colors hover:bg-[#8f2528]"
             >
@@ -136,6 +147,14 @@ export default function ProductDetails() {
           )}
         </div>
       </div>
+      {showOrderForm && (
+        <OrderFormModal
+          product={data}
+          isLoading={orderMutation.isLoading}
+          onClose={() => setShowOrderForm(false)}
+          onSubmit={(details) => orderProduct(details)}
+        />
+      )}
     </section>
   );
 }

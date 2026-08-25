@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api/apiClient";
 import useStore from "../store/useStore";
+import OrderFormModal, { needsOrderForm } from "../components/OrderFormModal";
 
 async function fetchProducts({ queryKey }) {
   const [, filters] = queryKey;
@@ -26,6 +27,7 @@ function ProductSkeleton() {
 }
 
 export default function Products() {
+  const [formProduct, setFormProduct] = useState(null);
   const [filters, setFilters] = useState({
     search: "",
     minPrice: "",
@@ -66,12 +68,13 @@ export default function Products() {
   }
 
   const orderMutation = useMutation(
-    (product) =>
+    ({ product, details }) =>
       api.post("/api/orders", {
         orderId: Date.now(),
         product: product._id,
         user: user.id,
         orderStatus: 1,
+        orderDetails: details,
       }),
     {
       onSuccess: () => {
@@ -84,6 +87,14 @@ export default function Products() {
     orderMutation.error?.userMessage ||
     orderMutation.error?.response?.data?.error ||
     (orderMutation.error && "Die Bestellung konnte nicht aufgegeben werden.");
+
+  function orderProduct(product) {
+    if (needsOrderForm(product.productName)) {
+      setFormProduct(product);
+      return;
+    }
+    orderMutation.mutate({ product });
+  }
 
   if (isLoading) {
     return (
@@ -203,12 +214,6 @@ export default function Products() {
                 </div>
               </div>
               <div className="p-6 flex flex-col flex-1">
-                <Link
-                  to={`/products/${p._id}`}
-                  className="mb-2 block min-h-[3.5rem] text-xl font-bold text-[#49494d] transition-colors hover:text-[#b42f32] line-clamp-2"
-                >
-                  {p.productName}
-                </Link>
                 <p className="mb-4 min-h-[3rem] text-sm text-[#878d92] line-clamp-2">
                   {p.description || "Keine Beschreibung verfügbar"}
                 </p>
@@ -219,7 +224,7 @@ export default function Products() {
                 </div>
                 <div className="mt-auto pt-4 flex gap-2">
                   <button
-                    onClick={() => orderMutation.mutate(p)}
+                    onClick={() => orderProduct(p)}
                     disabled={orderMutation.isLoading}
                     className="flex-1 rounded-sm bg-[#b42f32] py-2 text-sm font-medium text-[#e3e3cd] transition-colors hover:bg-[#8f2528]"
                   >
@@ -236,6 +241,16 @@ export default function Products() {
             </div>
           ))}
         </div>
+      )}
+      {formProduct && (
+        <OrderFormModal
+          product={formProduct}
+          isLoading={orderMutation.isLoading}
+          onClose={() => setFormProduct(null)}
+          onSubmit={(details) =>
+            orderMutation.mutate({ product: formProduct, details })
+          }
+        />
       )}
     </section>
   );
