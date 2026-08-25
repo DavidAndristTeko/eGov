@@ -5,12 +5,15 @@
 @tailwind utilities;
 
 :root {
-  --bg: #f8fafc;
-  --text: #0f172a;
+  --brand: #b42f32;
+  --accent: #df6747;
+  --paper: #e3e3cd;
+  --muted: #878d92;
+  --ink: #49494d;
 }
 
 body {
-  @apply m-0 bg-slate-50 text-slate-900;
+  @apply m-0 bg-[#e3e3cd] text-[#49494d];
   font-family:
     Inter,
     system-ui,

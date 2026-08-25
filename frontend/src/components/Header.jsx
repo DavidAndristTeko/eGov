@@ -12,37 +12,37 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-white shadow-md border-b border-slate-200">
-      <nav className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between flex-wrap gap-4">
+    <header className="border-b border-[#878d92]/40 bg-[#e3e3cd]">
+      <nav className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4">
         <div className="flex items-center gap-6 flex-wrap">
           <Link
             to="/"
-            className="font-bold text-lg text-blue-600 hover:text-blue-800 transition"
+            className="text-lg font-bold tracking-tight text-[#b42f32] transition-colors hover:text-[#8f2528]"
           >
             eGov
           </Link>
           <Link
             to="/"
-            className="text-slate-700 hover:text-blue-600 transition"
+            className="text-sm font-medium text-[#49494d] transition-colors hover:text-[#b42f32]"
           >
             Home
           </Link>
           <Link
             to="/products"
-            className="text-slate-700 hover:text-blue-600 transition"
+            className="text-sm font-medium text-[#49494d] transition-colors hover:text-[#b42f32]"
           >
             Produkte
           </Link>
           <Link
             to="/orders"
-            className="text-slate-700 hover:text-blue-600 transition"
+            className="text-sm font-medium text-[#49494d] transition-colors hover:text-[#b42f32]"
           >
             Meine Bestellungen
           </Link>
           {token && (
             <Link
               to="/account"
-              className="text-slate-700 hover:text-blue-600 transition"
+              className="text-sm font-medium text-[#49494d] transition-colors hover:text-[#b42f32]"
             >
               Mein Konto
             </Link>
@@ -52,7 +52,7 @@ export default function Header() {
           {!token && (
             <Link
               to="/register"
-              className="px-4 py-2 text-slate-700 hover:text-blue-600 transition"
+              className="px-4 py-2 text-sm font-medium text-[#49494d] transition-colors hover:text-[#b42f32]"
             >
               Registrieren
             </Link>
@@ -60,14 +60,14 @@ export default function Header() {
           {token ? (
             <button
               onClick={handleLogout}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-medium"
+              className="rounded-sm bg-[#49494d] px-4 py-2 text-sm font-semibold text-[#e3e3cd] transition-colors hover:bg-[#b42f32]"
             >
               Logout
             </button>
           ) : (
             <Link
               to="/login"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+              className="rounded-sm bg-[#b42f32] px-4 py-2 text-sm font-semibold text-[#e3e3cd] transition-colors hover:bg-[#8f2528]"
             >
               Login
             </Link>

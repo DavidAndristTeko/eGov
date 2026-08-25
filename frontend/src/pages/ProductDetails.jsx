@@ -39,11 +39,11 @@ export default function ProductDetails() {
 
   if (isLoading) {
     return (
-      <section className="max-w-4xl mx-auto py-12 px-4">
+      <section className="mx-auto max-w-4xl px-4 py-12">
         <div className="animate-pulse">
-          <div className="h-96 bg-slate-200 rounded-lg mb-6"></div>
-          <div className="h-10 bg-slate-200 rounded mb-4 w-2/3"></div>
-          <div className="h-6 bg-slate-200 rounded mb-6 w-1/3"></div>
+          <div className="mb-6 h-96 bg-[#878d92]/30"></div>
+          <div className="mb-4 h-10 w-2/3 bg-[#878d92]/30"></div>
+          <div className="mb-6 h-6 w-1/3 bg-[#878d92]/30"></div>
         </div>
       </section>
     );
@@ -51,13 +51,13 @@ export default function ProductDetails() {
 
   if (error) {
     return (
-      <section className="max-w-4xl mx-auto py-12 px-4">
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-6 mb-4">
+      <section className="mx-auto max-w-4xl px-4 py-12">
+        <div className="mb-4 border border-[#b42f32]/30 bg-[#b42f32]/10 p-6 text-[#b42f32]">
           Fehler beim Laden des Produkts.
         </div>
         <button
           onClick={() => navigate("/products")}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          className="rounded-sm bg-[#b42f32] px-4 py-2 text-[#e3e3cd] transition-colors hover:bg-[#8f2528]"
         >
           ← Zurück
         </button>
@@ -66,45 +66,47 @@ export default function ProductDetails() {
   }
 
   return (
-    <section className="max-w-4xl mx-auto py-12 px-4">
+    <section className="mx-auto max-w-4xl px-4 py-12">
       <button
         onClick={() => navigate("/products")}
-        className="text-blue-600 hover:text-blue-800 font-medium mb-8 inline-flex items-center gap-2"
+        className="mb-8 inline-flex items-center gap-2 font-medium text-[#b42f32] hover:text-[#df6747]"
       >
         ← Zurück zu Produkten
       </button>
 
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-500 to-blue-600 h-64 md:h-96 flex items-center justify-center">
-          <div className="text-8xl">📦</div>
+      <div className="overflow-hidden border border-[#878d92]/40 bg-[#e3e3cd] shadow-[0_8px_24px_rgba(73,73,77,0.12)]">
+        <div className="flex h-64 items-center justify-center bg-[#b42f32] md:h-96">
+          <div className="text-sm font-semibold uppercase tracking-[0.2em] text-[#e3e3cd]">
+            eGov Services
+          </div>
         </div>
 
         <div className="p-8">
-          <h1 className="text-4xl font-bold text-slate-900 mb-4">
+          <h1 className="mb-4 text-4xl font-bold text-[#49494d]">
             {data.productName}
           </h1>
 
-          <div className="mb-6 pb-6 border-b border-slate-200">
-            <p className="text-2xl font-bold text-blue-600">
-              {(data.price ?? 0).toFixed(2)} €
+          <div className="mb-6 border-b border-[#878d92]/50 pb-6">
+            <p className="text-2xl font-bold text-[#b42f32]">
+              {(data.price ?? 0).toFixed(2)} CHF
             </p>
           </div>
 
           <div className="mb-8">
-            <h3 className="text-lg font-semibold text-slate-900 mb-3">
+            <h3 className="mb-3 text-lg font-semibold text-[#49494d]">
               Beschreibung
             </h3>
-            <p className="text-slate-600 leading-relaxed">
+            <p className="leading-relaxed text-[#878d92]">
               {data.description || "Keine detaillierte Beschreibung verfügbar."}
             </p>
           </div>
 
           {data.category && (
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-slate-900 mb-3">
+              <h3 className="mb-3 text-lg font-semibold text-[#49494d]">
                 Kategorie
               </h3>
-              <span className="inline-block px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+              <span className="inline-block bg-[#df6747]/20 px-4 py-2 text-sm font-medium text-[#b42f32]">
                 {data.category}
               </span>
             </div>
@@ -114,7 +116,7 @@ export default function ProductDetails() {
             <button
               onClick={() => orderMutation.mutate()}
               disabled={orderMutation.isLoading}
-              className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold text-lg"
+              className="rounded-sm bg-[#b42f32] px-8 py-3 text-lg font-semibold text-[#e3e3cd] transition-colors hover:bg-[#8f2528]"
             >
               {orderMutation.isLoading
                 ? "Wird bestellt..."
@@ -122,7 +124,7 @@ export default function ProductDetails() {
             </button>
           </div>
           {orderMutation.error?.userMessage && (
-            <div className="mt-4 bg-red-50 border border-red-200 text-red-700 rounded-lg p-4">
+            <div className="mt-4 border border-[#b42f32]/30 bg-[#b42f32]/10 p-4 text-[#b42f32]">
               {orderMutation.error.userMessage}{" "}
               <button
                 onClick={() => navigate("/login")}
