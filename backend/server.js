@@ -54,9 +54,10 @@ function requireAuth(req, res, next) {
     return res.status(401).json({ error: "Authentifizierung erforderlich." });
   }
 
-  //
+  //Token des Users wird verifiziert und wenn erfolgreich, wird die ID des Users in "req" abgelegt, womit sie der nächsten Funktion zur Verfügung gestellt wird.
   try {
     req.userId = jwt.verify(token, process.env.JWT_SECRET).id;
+    //Wenn jwt.verify keinen error wirft, zum nächsten Schritt gehen (in diesem Fall "requireOwnAccount")
     next();
   } catch (error) {
     return res
@@ -65,11 +66,17 @@ function requireAuth(req, res, next) {
   }
 }
 
+//Prüft ob User auf seine eigenen Daten oder die eines anderen Users zugreift
 function requireOwnAccount(req, res, next) {
+  //User ID welche von jwt.verify geprüft wurde, wir mit id in der Route verglichen, um sicherzustellen, dass user nur seine eigenen Daten bearbeitet
   if (String(req.userId) !== String(req.params.id)) {
-    return res
-      .status(403)
-      .json({ error: "Sie dürfen nur Ihr eigenes Konto verwalten." });
+    //Falls die beiden ids nicht übereinstimmen, Fehlermeldung ausgeben.
+    return (
+      res
+        //Statuscode 403 steht für "authenticated, but not authorized for this action". Wird genutzt um User zu sagen, dass er für die gewünschte Route nicht berechtigt ist.
+        .status(403)
+        .json({ error: "Sie dürfen nur Ihr eigenes Konto verwalten." })
+    );
   }
   next();
 }
