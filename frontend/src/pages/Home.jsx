@@ -21,41 +21,6 @@ export default function Home() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="text-4xl mb-4">📦</div>
-          <h3 className="text-xl font-bold text-slate-900 mb-3">
-            Große Produktauswahl
-          </h3>
-          <p className="text-slate-600">
-            Durchsuchen Sie unseren umfassenden Katalog mit tausenden Produkten
-            und Dienstleistungen.
-          </p>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="text-4xl mb-4">🔒</div>
-          <h3 className="text-xl font-bold text-slate-900 mb-3">
-            Sichere Authentifikation
-          </h3>
-          <p className="text-slate-600">
-            Ihre Daten sind durch moderne Sicherheitsstandards und
-            Verschlüsselung geschützt.
-          </p>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="text-4xl mb-4">⚡</div>
-          <h3 className="text-xl font-bold text-slate-900 mb-3">
-            Schnelle Bestellung
-          </h3>
-          <p className="text-slate-600">
-            Bestellen Sie in wenigen Klicks und verfolgen Sie Ihre Bestellungen
-            in Echtzeit.
-          </p>
-        </div>
-      </div>
-
       {!user && (
         <div className="bg-slate-50 rounded-lg p-8 mt-12 text-center">
           <h2 className="text-3xl font-bold text-slate-900 mb-4">

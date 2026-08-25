@@ -28,13 +28,13 @@ async function seed() {
 
     //...bereits vorhandene Testdaten in der db zu löschen,...
     await Promise.all([
-      User.deleteMany({}),
-      Product.deleteMany({}),
-      Order.deleteMany({}),
+      user.deleteMany({}),
+      product.deleteMany({}),
+      order.deleteMany({}),
     ]);
 
     //...neue Testdaten zu erstellen...
-    const users = await User.create([
+    const users = await user.create([
       {
         userId: 1001,
         firstname: "Anna",
@@ -53,41 +53,116 @@ async function seed() {
       },
     ]);
 
-    const products = await Product.create([
+    const products = await product.create([
+      //Es werden 3 Produkte generiert, die zum eGov Konzept passen und individuelle Bestellformulare haben
       {
         productId: 2001,
+        productName: "Gesuch für Wildtierhaltungsbewilligung",
+        description:
+          "Antrag zur Bewilligung der Haltung exotischer Tiere gemäss kantonaler Tierschutzverordnung.",
+        productActive: true,
+        price: 150,
+      },
+      {
+        productId: 2002,
+        productName: "Gesuch für Lernfahrausweis",
+        description:
+          "Antrag zur Ausstellung eines Lernfahrausweises für die Kategorie B.",
+        productActive: true,
+        price: 75,
+      },
+      {
+        productId: 2003,
+        productName: "Baugesuch",
+        description:
+          "Antrag zur Bewilligung eines Bauvorhabens auf privatem Grundstück.",
+        productActive: true,
+        price: 400,
+      },
+      //Zusätzlich werden 9 "Filler-Produkte" generiert, mit denen wir Such-/Filterfunktionen testen können
+      {
+        productId: 2004,
         productName: "Laptop",
         description: "Leistungsstarker Business-Laptop",
         productActive: true,
         price: 999,
       },
       {
-        productId: 2002,
+        productId: 2005,
         productName: "Monitor",
         description: "27-Zoll UltraWide-Monitor",
         productActive: true,
         price: 349,
       },
+      {
+        productId: 2006,
+        productName: "Tastatur",
+        description: "Mechanische Tastatur mit RGB-Beleuchtung",
+        productActive: true,
+        price: 89,
+      },
+      {
+        productId: 2007,
+        productName: "Maus",
+        description: "Kabellose ergonomische Maus",
+        productActive: true,
+        price: 45,
+      },
+      {
+        productId: 2008,
+        productName: "Kopfhörer",
+        description: "Noise-Cancelling Over-Ear Kopfhörer",
+        productActive: true,
+        price: 199,
+      },
+      {
+        productId: 2009,
+        productName: "Webcam",
+        description: "Full-HD Webcam mit Autofokus",
+        productActive: true,
+        price: 59,
+      },
+      {
+        productId: 2010,
+        productName: "Drucker",
+        description: "Kompakter Tintenstrahldrucker für den Heimgebrauch",
+        productActive: true,
+        price: 129,
+      },
+      {
+        productId: 2011,
+        productName: "Externe Festplatte",
+        description: "2TB USB-C Festplatte",
+        productActive: true,
+        price: 79,
+      },
+      {
+        productId: 2012,
+        productName: "USB-Hub",
+        description: "7-Port USB 3.0 Hub",
+        productActive: true,
+        price: 25,
+      },
     ]);
 
-    await Order.create([
+    await order.create([
       {
         orderId: 3001,
-        product: products[0]._id,
+        product: products[0]._id, //Wildtierhaltungsbewilligung
         user: users[0]._id,
         orderDate: new Date(),
         orderStatus: 1,
       },
       {
         orderId: 3002,
-        product: products[1]._id,
+        product: products[1]._id, //Lernfahrausweis
         user: users[1]._id,
         orderDate: new Date(),
         orderStatus: 2,
       },
       {
         orderId: 3003,
-        product: products[0]._id,
+        product: products[2]._id, //Baugesuch
         user: users[1]._id,
         orderDate: new Date(),
         orderStatus: 3,
