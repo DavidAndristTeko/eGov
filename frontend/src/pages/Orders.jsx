@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useStore from "../store/useStore";
 import api from "../api/apiClient";
@@ -9,6 +9,7 @@ async function fetchOrders(userId) {
 }
 
 export default function Orders() {
+  const [orderToCancel, setOrderToCancel] = useState(null);
   const user = useStore((s) => s.user);
   const queryClient = useQueryClient();
 
@@ -27,7 +28,7 @@ export default function Orders() {
         await queryClient.cancelQueries(["orders", user.id]);
         const previous = queryClient.getQueryData(["orders", user.id]);
         queryClient.setQueryData(["orders", user.id], (old = []) =>
-          old.map((o) => (o._id === orderId ? { ...o, orderStatus: 3 } : o)),
+          old.map((o) => (o._id === orderId ? { ...o, orderStatus: 2 } : o)),
         );
         return { previous };
       },
@@ -126,11 +127,7 @@ export default function Orders() {
                   <p className="mb-1 text-sm text-[#878d92]">Status</p>
                   <p className="text-lg font-bold">
                     <span className="inline-block bg-[#df6747]/20 px-3 py-1 text-sm text-[#b42f32]">
-                      {o.orderStatus === 1
-                        ? "Ausstehend"
-                        : o.orderStatus === 3
-                          ? "Inaktiv"
-                          : "Verarbeitet"}
+                      {o.orderStatus === 2 ? "Inaktiv" : "Aktiv"}
                     </span>
                   </p>
                 </div>
@@ -173,14 +170,10 @@ export default function Orders() {
                 </div>
               )}
 
-              {o.orderStatus !== 3 && (
+              {o.orderStatus !== 2 && (
                 <div className="flex gap-3">
                   <button
-                    onClick={() => {
-                      if (confirm("Bestellung wirklich stornieren?")) {
-                        mutation.mutate(o._id);
-                      }
-                    }}
+                    onClick={() => setOrderToCancel(o)}
                     disabled={mutation.isLoading}
                     className="rounded-sm bg-[#49494d] px-6 py-2 font-medium text-[#e3e3cd] transition-colors hover:bg-[#b42f32] disabled:cursor-not-allowed disabled:opacity-50"
                   >
@@ -190,6 +183,49 @@ export default function Orders() {
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {orderToCancel && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#49494d]/60 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="cancel-order-title"
+        >
+          <div className="w-full max-w-md border border-[#878d92]/40 bg-[#f4f3e8] p-6 shadow-[0_8px_24px_rgba(73,73,77,0.24)]">
+            <h2
+              id="cancel-order-title"
+              className="text-2xl font-bold text-[#49494d]"
+            >
+              Bestellung stornieren?
+            </h2>
+            <p className="mt-3 text-[#878d92]">
+              Möchten Sie die Bestellung für „
+              {orderToCancel.product?.productName || "dieses Produkt"}" wirklich
+              stornieren?
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setOrderToCancel(null)}
+                className="rounded-sm border border-[#878d92] px-4 py-2 text-sm font-medium text-[#49494d] transition-colors hover:bg-[#878d92]/20"
+              >
+                Abbrechen
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  mutation.mutate(orderToCancel._id);
+                  setOrderToCancel(null);
+                }}
+                disabled={mutation.isLoading}
+                className="rounded-sm bg-[#b42f32] px-4 py-2 text-sm font-medium text-[#e3e3cd] transition-colors hover:bg-[#8f2528] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Bestellung stornieren
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </section>

@@ -295,7 +295,10 @@ app.get(`/api/users/:id/orders`, async (req, res) => {
     const userId = req.params.id;
 
     //Zieht alle Bestellungen die unter dieser User Id getätigt wurden und füllt diese in Konstante ab.
-    const userOrders = await order.find({ user: userId }).populate("product");
+    const userOrders = await order
+      .find({ user: userId })
+      .populate("product")
+      .sort({ orderDate: -1 });
 
     res.json(userOrders);
   } catch (error) {
@@ -354,7 +357,7 @@ app.delete(`/api/orders/:id`, async (req, res) => {
   try {
     const cancelledOrder = await order.findByIdAndUpdate(
       req.params.id,
-      { orderStatus: 3 },
+      { orderStatus: 2 },
       { new: true, runValidators: true },
     );
 

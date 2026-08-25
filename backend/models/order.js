@@ -12,7 +12,7 @@ const orderSchema = new Schema({
     required: [true, "Bestellungsdatum fehlt"],
     default: Date.now,
   },
-  orderStatus: { type: Number, required: true, enum: [1, 2, 3], default: 1 },
+  orderStatus: { type: Number, required: true, enum: [1, 2], default: 1 },
 });
 
 //Schema wird als Model registriert

@@ -158,14 +158,14 @@ async function seed() {
         product: products[1]._id, //Lernfahrausweis
         user: users[1]._id,
         orderDate: new Date(),
-        orderStatus: 2,
+        orderStatus: 1,
       },
       {
         orderId: 3003,
         product: products[2]._id, //Baugesuch
         user: users[1]._id,
         orderDate: new Date(),
-        orderStatus: 3,
+        orderStatus: 2,
       },
     ]);
 
