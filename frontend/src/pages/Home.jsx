@@ -1,7 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import useStore from "../store/useStore";
 
 export default function Home() {
+  const user = useStore((state) => state.user);
+
   return (
     <section className="max-w-5xl mx-auto py-16 px-4">
       <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg p-12 mb-12">
@@ -53,29 +56,31 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="bg-slate-50 rounded-lg p-8 mt-12 text-center">
-        <h2 className="text-3xl font-bold text-slate-900 mb-4">
-          Bereit zu starten?
-        </h2>
-        <p className="text-slate-600 mb-6">
-          Melden Sie sich an oder registrieren Sie sich, um unsere Services zu
-          nutzen.
-        </p>
-        <div className="flex gap-4 justify-center flex-wrap">
-          <Link
-            to="/login"
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
-          >
-            Login
-          </Link>
-          <Link
-            to="/register"
-            className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition"
-          >
-            Registrieren
-          </Link>
+      {!user && (
+        <div className="bg-slate-50 rounded-lg p-8 mt-12 text-center">
+          <h2 className="text-3xl font-bold text-slate-900 mb-4">
+            Bereit zu starten?
+          </h2>
+          <p className="text-slate-600 mb-6">
+            Melden Sie sich an oder registrieren Sie sich, um unsere Services zu
+            nutzen.
+          </p>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <Link
+              to="/login"
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+            >
+              Login
+            </Link>
+            <Link
+              to="/register"
+              className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition"
+            >
+              Registrieren
+            </Link>
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }

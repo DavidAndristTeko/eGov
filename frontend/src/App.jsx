@@ -13,7 +13,6 @@ import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 // Lazy Loading: Seite wird erst geladen wenn man sie braucht (Zeit sparend)
 const ProductDetails = React.lazy(() => import("./pages/ProductDetails"));
-const Cart = React.lazy(() => import("./pages/Cart"));
 const Orders = React.lazy(() => import("./pages/Orders"));
 export default function App() {
   return (
@@ -64,20 +63,9 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/cart"
-            element={
-              <ProtectedRoute>
-                <React.Suspense fallback={<div>Lädt...</div>}>
-                  <Cart /> {/* Cart: selbstschliessendes Tag, JSX-Syntax*/}
-                </React.Suspense>
-              </ProtectedRoute>
-            }
-          />
         </Routes>
       </main>
-      {/* Footer ist ausserhalb von <Routes> wird somit immer angezeigt */}
-      <Footer /> {/*Footer: selbstschliessendes Tag JSX-Syntax*/}
+      <Footer />
     </div>
   );
 }

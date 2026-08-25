@@ -1,6 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api/apiClient";
 import useStore from "../store/useStore";
 
@@ -21,7 +21,25 @@ function ProductSkeleton() {
 
 export default function Products() {
   const { data, isLoading, error } = useQuery(["products"], fetchProducts);
-  const addToCart = useStore((s) => s.addToCart);
+  const user = useStore((s) => s.user);
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const orderMutation = useMutation(
+    (product) =>
+      api.post("/api/orders", {
+        orderId: Date.now(),
+        product: product._id,
+        user: user.id,
+        orderStatus: 1,
+      }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["orders", user?.id]);
+        navigate("/orders");
+      },
+    },
+  );
+  const orderErrorMessage = orderMutation.error?.userMessage;
 
   if (isLoading) {
     return (
@@ -50,6 +68,14 @@ export default function Products() {
   return (
     <section className="max-w-6xl mx-auto py-12 px-4">
       <h1 className="text-3xl font-bold mb-8">Produkte</h1>
+      {orderErrorMessage && (
+        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-6 mb-6">
+          {orderErrorMessage}{" "}
+          <Link to="/login" className="font-medium underline">
+            Zum Login
+          </Link>
+        </div>
+      )}
 
       {data && data.length === 0 ? (
         <div className="bg-blue-50 border border-blue-200 text-blue-700 rounded-lg p-6 text-center">
@@ -82,16 +108,11 @@ export default function Products() {
                 </div>
                 <div className="mt-4 flex gap-2">
                   <button
-                    onClick={() =>
-                      addToCart({
-                        productId: p._id,
-                        productName: p.productName,
-                        price: p.price ?? 0,
-                      })
-                    }
+                    onClick={() => orderMutation.mutate(p)}
+                    disabled={orderMutation.isLoading}
                     className="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium text-sm"
                   >
-                    In den Warenkorb
+                    Direkt bestellen
                   </button>
                   <Link
                     to={`/products/${p._id}`}

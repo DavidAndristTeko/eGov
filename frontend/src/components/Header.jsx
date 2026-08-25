@@ -34,12 +34,6 @@ export default function Header() {
             Produkte
           </Link>
           <Link
-            to="/cart"
-            className="text-slate-700 hover:text-blue-600 transition"
-          >
-            Warenkorb
-          </Link>
-          <Link
             to="/orders"
             className="text-slate-700 hover:text-blue-600 transition"
           >

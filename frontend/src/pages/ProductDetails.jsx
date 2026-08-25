@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api/apiClient";
 import useStore from "../store/useStore";
 
@@ -19,7 +19,23 @@ export default function ProductDetails() {
       enabled: !!id,
     },
   );
-  const addToCart = useStore((s) => s.addToCart);
+  const user = useStore((s) => s.user);
+  const queryClient = useQueryClient();
+  const orderMutation = useMutation(
+    () =>
+      api.post("/api/orders", {
+        orderId: Date.now(),
+        product: data._id,
+        user: user.id,
+        orderStatus: 1,
+      }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["orders", user?.id]);
+        navigate("/orders");
+      },
+    },
+  );
 
   if (isLoading) {
     return (
@@ -96,24 +112,26 @@ export default function ProductDetails() {
 
           <div className="flex gap-4 flex-wrap">
             <button
-              onClick={() =>
-                addToCart({
-                  productId: data._id,
-                  productName: data.productName,
-                  price: data.price ?? 0,
-                })
-              }
+              onClick={() => orderMutation.mutate()}
+              disabled={orderMutation.isLoading}
               className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold text-lg"
             >
-              In den Warenkorb
+              {orderMutation.isLoading
+                ? "Wird bestellt..."
+                : "Direkt bestellen"}
             </button>
-            <a
-              href="/cart"
-              className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold text-lg"
-            >
-              Zum Warenkorb
-            </a>
           </div>
+          {orderMutation.error?.userMessage && (
+            <div className="mt-4 bg-red-50 border border-red-200 text-red-700 rounded-lg p-4">
+              {orderMutation.error.userMessage}{" "}
+              <button
+                onClick={() => navigate("/login")}
+                className="font-medium underline"
+              >
+                Zum Login
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </section>

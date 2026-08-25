@@ -80,7 +80,12 @@ export default function Orders() {
       <section className="max-w-4xl mx-auto py-12 px-4">
         <h1 className="text-3xl font-bold mb-8">Meine Bestellungen</h1>
         <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-6">
-          Fehler beim Laden der Bestellungen.
+          {error.userMessage || "Fehler beim Laden der Bestellungen."}
+          {error.userMessage && (
+            <a href="/login" className="block mt-3 font-medium underline">
+              Zum Login
+            </a>
+          )}
         </div>
       </section>
     );
