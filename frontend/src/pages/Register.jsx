@@ -7,8 +7,16 @@ import api from "../api/apiClient";
 
 const registerSchema = z
   .object({
-    firstname: z.string().min(2, "Vorname muss mindestens 2 Zeichen haben"),
-    lastname: z.string().min(2, "Nachname muss mindestens 2 Zeichen haben"),
+    firstname: z
+      .string()
+      .trim()
+      .min(1, "Vorname ist erforderlich")
+      .min(2, "Vorname muss mindestens 2 Zeichen haben"),
+    lastname: z
+      .string()
+      .trim()
+      .min(1, "Nachname ist erforderlich")
+      .min(2, "Nachname muss mindestens 2 Zeichen haben"),
     userName: z.string().min(2, "Username muss mindestens 2 Zeichen haben"),
     password: z.string().min(8, "Passwort muss mindestens 8 Zeichen haben"),
     passwordConfirm: z.string(),
@@ -69,10 +77,11 @@ export default function Register() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
-              Vorname
+              Vorname <span className="text-red-600">*</span>
             </label>
             <input
               {...register("firstname")}
+              required
               className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
               placeholder="Geben Sie Ihren Vornamen ein"
             />
@@ -85,10 +94,11 @@ export default function Register() {
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
-              Nachname
+              Nachname <span className="text-red-600">*</span>
             </label>
             <input
               {...register("lastname")}
+              required
               className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
               placeholder="Geben Sie Ihren Nachnamen ein"
             />

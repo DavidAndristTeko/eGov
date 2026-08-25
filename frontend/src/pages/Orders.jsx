@@ -27,7 +27,7 @@ export default function Orders() {
         await queryClient.cancelQueries(["orders", user.id]);
         const previous = queryClient.getQueryData(["orders", user.id]);
         queryClient.setQueryData(["orders", user.id], (old = []) =>
-          old.filter((o) => o._id !== orderId),
+          old.map((o) => (o._id === orderId ? { ...o, orderStatus: 3 } : o)),
         );
         return { previous };
       },
@@ -123,7 +123,11 @@ export default function Orders() {
                   <p className="text-sm text-slate-600 mb-1">Status</p>
                   <p className="text-lg font-bold">
                     <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
-                      {o.orderStatus === 1 ? "Ausstehend" : "Verarbeitet"}
+                      {o.orderStatus === 1
+                        ? "Ausstehend"
+                        : o.orderStatus === 3
+                          ? "Inaktiv"
+                          : "Verarbeitet"}
                     </span>
                   </p>
                 </div>
@@ -150,19 +154,21 @@ export default function Orders() {
                 </div>
               </div>
 
-              <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    if (confirm("Bestellung wirklich stornieren?")) {
-                      mutation.mutate(o._id);
-                    }
-                  }}
-                  disabled={mutation.isLoading}
-                  className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {mutation.isLoading ? "Wird storniert..." : "Stornieren"}
-                </button>
-              </div>
+              {o.orderStatus !== 3 && (
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      if (confirm("Bestellung wirklich stornieren?")) {
+                        mutation.mutate(o._id);
+                      }
+                    }}
+                    disabled={mutation.isLoading}
+                    className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {mutation.isLoading ? "Wird storniert..." : "Stornieren"}
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>

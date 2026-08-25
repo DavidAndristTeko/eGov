@@ -82,7 +82,7 @@ app.get("/", (req, res) => {
 app.get(`/api/products`, async (req, res) => {
   try {
     //Wartet bis DB-Abfrage durchgeführt wurde, damit alle Produkte in Konstante gespeichert werden.
-    const products = await product.find();
+    const products = await product.find({ productActive: true });
     //Gibt Antworten der DB Anfrage zurück an das Frontend
     res.json(products);
   } catch (error) {
@@ -96,23 +96,40 @@ app.get(`/api/products`, async (req, res) => {
 //GET Routehandler für Suchen von Produkten
 app.get(`/api/products/search`, async (req, res) => {
   try {
-    //Füllt Konstante mit Suchanfrage des Users ab
-    const searchTerm = req.query.name;
+    const { name, minPrice, maxPrice } = req.query;
+    const filters = { productActive: true };
+    const searchTerm = typeof name === "string" ? name.trim() : "";
 
-    //Prüft ob Suchtext leer ist. Retourniert alle Produkte wenn true.
-    if (!searchTerm || searchTerm.trim() === "") {
-      const allProducts = await product.find();
-      return res.json(allProducts);
+    if (searchTerm) {
+      const escapedSearchTerm = searchTerm.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        "\\$&",
+      );
+      filters.$or = [
+        { productName: { $regex: escapedSearchTerm, $options: "i" } },
+        { description: { $regex: escapedSearchTerm, $options: "i" } },
+      ];
     }
 
-    //Füllt das Resultat einer MongoDB Suche, anhand der User-Eingabe, in eine Konstante ab
-    const results = await product.find({
-      //Hierbei handelt es sich um MongoDB-Syntax. Diese stellt sicher, dass die Suchanfrage sowohl im Produktnamen, als auch der Beschreibung durchgeführt wird.
-      $or: [
-        { productName: { $regex: searchTerm, $options: "i" } },
-        { description: { $regex: searchTerm, $options: "i" } },
-      ],
-    });
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      const minimum = minPrice === undefined ? 0 : Number(minPrice);
+      const maximum =
+        maxPrice === undefined ? Number.MAX_SAFE_INTEGER : Number(maxPrice);
+
+      if (
+        !Number.isFinite(minimum) ||
+        !Number.isFinite(maximum) ||
+        minimum < 0 ||
+        maximum < 0 ||
+        minimum > maximum
+      ) {
+        return res.status(400).json({ error: "Der Preisfilter ist ungültig." });
+      }
+
+      filters.price = { $gte: minimum, $lte: maximum };
+    }
+
+    const results = await product.find(filters).sort({ productName: 1 });
 
     res.json(results);
   } catch (error) {
@@ -125,7 +142,10 @@ app.get(`/api/products/search`, async (req, res) => {
 app.get(`/api/products/:id`, async (req, res) => {
   try {
     //Füllt Resultat der Suche per ID in Konstante ab
-    const oneProduct = await product.findById(req.params.id);
+    const oneProduct = await product.findOne({
+      _id: req.params.id,
+      productActive: true,
+    });
 
     //Falls Produkt-ID nicht gefunden wurde, wird Fehlermeldung ausgegeben
     if (!oneProduct) {
@@ -281,6 +301,17 @@ app.get(`/api/users/:id/orders`, async (req, res) => {
 //POST Route handler für neue Bestellungen
 app.post(`/api/orders`, async (req, res) => {
   try {
+    const selectedProduct = await product.findOne({
+      _id: req.body.product,
+      productActive: true,
+    });
+
+    if (!selectedProduct) {
+      return res
+        .status(400)
+        .json({ error: "Dieses Produkt ist nicht verfügbar." });
+    }
+
     const newOrder = await order.create(req.body);
     res.status(201).json(newOrder);
   } catch (error) {
@@ -312,16 +343,23 @@ app.put(`/api/orders/:id`, async (req, res) => {
   }
 });
 
-//DELETE Route handler für Stornieren von Bestellungen
+//DELETE Route handler für Stornieren von Bestellungen (Soft-Delete)
 app.delete(`/api/orders/:id`, async (req, res) => {
   try {
-    const deletedOrder = await order.findByIdAndDelete(req.params.id);
+    const cancelledOrder = await order.findByIdAndUpdate(
+      req.params.id,
+      { orderStatus: 3 },
+      { new: true, runValidators: true },
+    );
 
-    if (!deletedOrder) {
+    if (!cancelledOrder) {
       return res.status(404).json({ error: "Bestellung nicht gefunden!" });
     }
 
-    res.status(200).json({ message: "Bestellung erfolgreich storniert." });
+    res.status(200).json({
+      message: "Bestellung erfolgreich auf inaktiv gesetzt.",
+      order: cancelledOrder,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Fehler beim Stornieren der Bestellung!" });
