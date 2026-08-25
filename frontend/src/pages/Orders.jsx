@@ -160,12 +160,39 @@ export default function Orders() {
                     Angaben zum Gesuch
                   </p>
                   <dl className="grid grid-cols-1 gap-2 text-sm md:grid-cols-2">
-                    {Object.entries(o.orderDetails).map(([key, value]) => (
-                      <div key={key}>
-                        <dt className="text-[#878d92]">{key}</dt>
-                        <dd className="text-[#49494d]">{value}</dd>
-                      </div>
-                    ))}
+                    {Object.entries(o.orderDetails).map(([key, value]) => {
+                      const labelMap = {
+                        artDesGebaeudes: "Art des Gebäudes",
+                        artDesGebauedes: "Art des Gebäudes",
+                        artdesgebaeudes: "Art des Gebäudes",
+                        bauortAdresse: "Bauort / Adresse",
+                        bauortadresse: "Bauort / Adresse",
+                        bauort: "Bauort / Adresse",
+                        projektBeschreibung: "Projektbeschreibung",
+                        projektbeschreibung: "Projektbeschreibung",
+                        projekt: "Projektbeschreibung",
+                        vorname: "Vorname",
+                        nachname: "Nachname",
+                        geburtsdatum: "Geburtsdatum",
+                        adresse: "Adresse",
+                        kategorie: "Fahrzeugkategorie",
+                        tierart: "Tierart",
+                        anzahlTiere: "Anzahl Tiere",
+                        anzahltiere: "Anzahl Tiere",
+                        haltungsort: "Haltungsort / Adresse",
+                        haltungsortAdresse: "Haltungsort / Adresse",
+                        haltungsortadresse: "Haltungsort / Adresse",
+                      };
+
+                      return (
+                        <div key={key}>
+                          <dt className="text-[#878d92]">
+                            {labelMap[key] || key}
+                          </dt>
+                          <dd className="text-[#49494d]">{value}</dd>
+                        </div>
+                      );
+                    })}
                   </dl>
                 </div>
               )}
