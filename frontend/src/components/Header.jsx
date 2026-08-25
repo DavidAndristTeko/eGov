@@ -39,6 +39,14 @@ export default function Header() {
           >
             Meine Bestellungen
           </Link>
+          {token && (
+            <Link
+              to="/account"
+              className="text-slate-700 hover:text-blue-600 transition"
+            >
+              Mein Konto
+            </Link>
+          )}
         </div>
         <div className="flex items-center gap-3">
           {!token && (

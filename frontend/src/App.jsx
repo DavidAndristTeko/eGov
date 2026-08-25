@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import Products from "./pages/Products";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Account from "./pages/Account";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -53,6 +54,14 @@ export default function App() {
           {/* Login: selbstschliessendes Tag, JSX-Syntax*/}
           <Route path="/register" element={<Register />} />{" "}
           {/*Register: selbstschliessendes Tag, JSX-Syntax*/}
+          <Route
+            path="/account"
+            element={
+              <ProtectedRoute>
+                <Account />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/orders"
             element={

@@ -38,6 +38,35 @@ app.use(cors());
 //Express.JSON ermöglicht das verarbeiten von einkommenden JSON Request Bodies
 app.use(express.json());
 
+function requireAuth(req, res, next) {
+  const authorization = req.headers.authorization || "";
+  const token = authorization.startsWith("Bearer ")
+    ? authorization.slice(7)
+    : null;
+
+  if (!token) {
+    return res.status(401).json({ error: "Authentifizierung erforderlich." });
+  }
+
+  try {
+    req.userId = jwt.verify(token, process.env.JWT_SECRET).id;
+    next();
+  } catch (error) {
+    return res
+      .status(401)
+      .json({ error: "Ungültige oder abgelaufene Sitzung." });
+  }
+}
+
+function requireOwnAccount(req, res, next) {
+  if (String(req.userId) !== String(req.params.id)) {
+    return res
+      .status(403)
+      .json({ error: "Sie dürfen nur Ihr eigenes Konto verwalten." });
+  }
+  next();
+}
+
 //Prüft ob Server läuft.
 app.listen(port, () => {
   console.log(`Beispiel-App läuft auf http://localhost:${port}`);
@@ -132,7 +161,7 @@ app.post(`/api/users`, async (req, res) => {
 });
 
 //PUT Route handler für Anpassungen an Nutzern
-app.put(`/api/users/:id`, async (req, res) => {
+app.put(`/api/users/:id`, requireAuth, requireOwnAccount, async (req, res) => {
   try {
     //Selektiert User anhand ID und übergibt aktualisierte Werte an DB. Aktualisierte Werte werden in Konstante gespeichert.
     const updatedUser = await user.findByIdAndUpdate(req.params.id, req.body, {
@@ -160,26 +189,31 @@ app.put(`/api/users/:id`, async (req, res) => {
 });
 
 //DELETE Route handler für Löschen von Nutzern
-app.delete(`/api/users/:id`, async (req, res) => {
-  try {
-    //Selektiert User anhand ID und löscht diesen aus DB. Resultat wird in Konstante abgefüllt.
-    const deletedUser = await user.findByIdAndDelete(req.params.id);
+app.delete(
+  `/api/users/:id`,
+  requireAuth,
+  requireOwnAccount,
+  async (req, res) => {
+    try {
+      //Selektiert User anhand ID und löscht diesen aus DB. Resultat wird in Konstante abgefüllt.
+      const deletedUser = await user.findByIdAndDelete(req.params.id);
 
-    if (!deletedUser) {
-      return res.status(404).json({ error: "Nutzer nicht gefunden!" });
+      if (!deletedUser) {
+        return res.status(404).json({ error: "Nutzer nicht gefunden!" });
+      }
+
+      //Löscht alle Bestellungen, die mit diesem Nutzer verknüpft sind
+      await order.deleteMany({ user: req.params.id });
+      //Statuscode 200 steht für "Anfrage war erfolgreich"
+      res.status(200).json({
+        message: "Nutzer und zugehörige Bestellungen erfolgreich gelöscht.",
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Fehler beim Löschen des Nutzers!" });
     }
-
-    //Löscht alle Bestellungen, die mit diesem Nutzer verknüpft sind
-    await order.deleteMany({ user: req.params.id });
-    //Statuscode 200 steht für "Anfrage war erfolgreich"
-    res.status(200).json({
-      message: "Nutzer und zugehörige Bestellungen erfolgreich gelöscht.",
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Fehler beim Löschen des Nutzers!" });
-  }
-});
+  },
+);
 
 //POST Route handler für Login
 app.post(`/api/login`, async (req, res) => {
@@ -211,10 +245,16 @@ app.post(`/api/login`, async (req, res) => {
       expiresIn: "1d",
     });
 
-    //Schickt Token, _id des Users und Usernamen an Frontend
+    //Schickt Token und sichere Profildaten an Frontend
     res.json({
       token,
-      user: { id: foundUser._id, userName: foundUser.userName },
+      user: {
+        id: foundUser._id,
+        firstname: foundUser.firstname,
+        lastname: foundUser.lastname,
+        userName: foundUser.userName,
+        userActive: foundUser.userActive,
+      },
     });
   } catch (error) {
     console.error(error);
