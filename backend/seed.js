@@ -28,13 +28,13 @@ async function seed() {
 
     //...bereits vorhandene Testdaten in der db zu löschen,...
     await Promise.all([
-      User.deleteMany({}),
-      Product.deleteMany({}),
-      Order.deleteMany({}),
+      user.deleteMany({}),
+      product.deleteMany({}),
+      order.deleteMany({}),
     ]);
 
     //...neue Testdaten zu erstellen...
-    const users = await User.create([
+    const users = await user.create([
       {
         userId: 1001,
         firstname: "Anna",
@@ -53,7 +53,7 @@ async function seed() {
       },
     ]);
 
-    const products = await Product.create([
+    const products = await product.create([
       //Es werden 3 Produkte generiert, die zum eGov Konzept passen und individuelle Bestellformulare haben
       {
         productId: 2001,
@@ -145,7 +145,7 @@ async function seed() {
       },
     ]);
 
-    await Order.create([
+    await order.create([
       {
         orderId: 3001,
         product: products[0]._id, //Wildtierhaltungsbewilligung
