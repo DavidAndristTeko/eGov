@@ -214,7 +214,7 @@ export default function Products() {
                 </p>
                 <div className="flex items-center justify-between min-h-[2.5rem]">
                   <span className="text-2xl font-bold text-[#49494d]">
-                    {(p.price ?? 0).toFixed(2)} €
+                    {(p.price ?? 0).toFixed(2)} CHF
                   </span>
                 </div>
                 <div className="mt-auto pt-4 flex gap-2">

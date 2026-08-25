@@ -88,7 +88,7 @@ export default function ProductDetails() {
 
           <div className="mb-6 border-b border-[#878d92]/50 pb-6">
             <p className="text-2xl font-bold text-[#b42f32]">
-              {(data.price ?? 0).toFixed(2)} €
+              {(data.price ?? 0).toFixed(2)} CHF
             </p>
           </div>
 
