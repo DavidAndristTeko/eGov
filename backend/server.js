@@ -38,16 +38,23 @@ app.use(cors());
 //Express.JSON ermöglicht das verarbeiten von einkommenden JSON Request Bodies
 app.use(express.json());
 
+//Funktion wird definiert um bestimmte routen zu "schützen" bzw. sicherzustellen, dass nru eingeloggte User auf die Route zugreifen können.
 function requireAuth(req, res, next) {
+  //Füllt Konstante mit dem Wert des Headers "authorization" ab. Falls kein Wert wird Konstante mit leerem Wert abgefüllt.
   const authorization = req.headers.authorization || "";
+  /*Füllt Konstante mit dem Token des Users ab. Header "authorization" sollte den Wert formatiert haben wie folgt "Bearer cjsaodijas..." 
+  Also nach "Bearer" kommt das Token selber. Deshalb die if/else abfrage die prüft ob Wert mit "Bearer " startet und bei true alles ausser das Token entfernt.*/
   const token = authorization.startsWith("Bearer ")
     ? authorization.slice(7)
     : null;
 
+  //Falls User nicht eingeloggt ist, Zugriff verweigern und Fehlermeldung ausgeben.
   if (!token) {
+    //Statuscode 401 steht für "Unautherized". Wird genutzt wenn Credentials falsch sind oder fehlen
     return res.status(401).json({ error: "Authentifizierung erforderlich." });
   }
 
+  //
   try {
     req.userId = jwt.verify(token, process.env.JWT_SECRET).id;
     next();
@@ -224,7 +231,6 @@ app.post(`/api/login`, async (req, res) => {
     const foundUser = await user.findOne({ userName });
 
     if (!foundUser) {
-      //Statuscode 401 steht für "Unautherized". Wird genutzt wenn Credentials falsch sind oder fehlen
       return res
         .status(401)
         .json({ error: "Ungültiger Username oder Passwort!" });
