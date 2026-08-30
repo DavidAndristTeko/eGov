@@ -42,7 +42,8 @@ const formFields = {
 };
 
 export function needsOrderForm(productName = "") {
-  return Object.prototype.hasOwnProperty.call(formFields, productName);
+  // gibt es ein formFields? -> true -> modal öffnen
+  return Object.prototype.hasOwnProperty.call(formFields, productName); // gibt es nicht? -> false -> Modal nicht nötig
 }
 
 export default function OrderFormModal({
@@ -51,9 +52,9 @@ export default function OrderFormModal({
   onClose,
   isLoading,
 }) {
-  const fields = formFields[product.productName] || [];
+  const fields = formFields[product.productName] || []; // holt die Felder für dieses Produkt, falls nicht vorhanden: leeres Array []
   const [values, setValues] = useState(
-    Object.fromEntries(fields.map((field) => [field.name, ""])),
+    Object.fromEntries(fields.map((field) => [field.name, ""])), // erstellt ein Objekt mit allen Feldnamen als Keys und leeren Strings als Werte
   );
 
   function updateValue(event) {

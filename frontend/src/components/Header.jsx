@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // import react router für nav
 import useStore from "../store/useStore";
 
 export default function Header() {
@@ -7,8 +7,9 @@ export default function Header() {
   const logout = useStore((s) => s.logout);
   const token = useStore((s) => s.token);
   const handleLogout = () => {
-    logout();
-    navigate("/login", { replace: true });
+    // wenn der User auf Logout klickt
+    logout(); // aufruf von logout(), das löscht den login status
+    navigate("/login", { replace: true }); // navigiert zu Login Seite, replace true um nicht auf eingeloggte seite zurückgehen zu können
   };
 
   return (
