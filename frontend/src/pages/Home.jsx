@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"; // navigation ohne Seite neu zu laden
 import useStore from "../store/useStore"; // Zugriff auf globale Daten (User, Token, etc.)
+import React from "react";
 
 export default function Home() {
   const user = useStore((state) => state.user); // holt den aktuellen User wenn angmeldet

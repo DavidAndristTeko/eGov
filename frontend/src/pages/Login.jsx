@@ -1,4 +1,4 @@
-import { useState } from "react"; // Hook für lokale States
+import React, { useState } from "react"; // Hook für lokale States
 import { useForm } from "react-hook-form"; // spezial Hook für Formular Verwaltung
 import { useNavigate } from "react-router-dom"; // nav zu anderen seiten
 import api from "../api/apiClient"; //API Client zu Server
@@ -6,9 +6,9 @@ import useStore from "../store/useStore"; // globaler store für user daten
 
 export default function Login() {
   const {
-    register,
-    handleSubmit,
-    formState: { errors },
+    register, // registriert input felder
+    handleSubmit, // verarbeitet formular einreichung
+    formState: { errors }, //
   } = useForm();
   const navigate = useNavigate();
   const [serverError, setServerError] = useState("");

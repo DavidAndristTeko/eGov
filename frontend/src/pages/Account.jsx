@@ -1,4 +1,4 @@
-import { useState } from "react"; // Hook für lokale States
+import React, { useState } from "react"; // Hook für lokale States
 import { useNavigate } from "react-router-dom"; // Hook um seiten zu wechseln
 import api from "../api/apiClient"; // vorkonfigurierter API Client
 import useStore from "../store/useStore"; // Zustandmanager (User, Token, etc.)
