@@ -5,7 +5,8 @@ import mongoose, { Schema } from "mongoose";
 const productSchema = new Schema({
   productId: { type: Number, required: true, unique: true },
   productName: { type: String, required: [true, "Titel fehlt"], trim: true },
-  description: String, //Optionale Produktbeschreibung
+  description: String,
+  imageUrl: String, //Optionale Bild-URL für die Produktkarte
   productActive: { type: Boolean, required: true, default: true },
   price: { min: 0, max: 9999, type: Number, default: 0 },
 });
