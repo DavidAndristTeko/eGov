@@ -1,19 +1,28 @@
-// Rendert die Wurzelkomponente (z.B. <App /> in ein DOM-Element(meist #root))
+// Das hier ist der Einstiegspunkt (das erste was der Browser ausführt)
+// hier wird alles initaliisert und alle provider eingerichtet, die App wird ins DOM eingefügt
 
-import React from "react";
-import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import App from "./App";
-import "./index.css";
+import React from "react"; // react import für JSX
+import { createRoot } from "react-dom/client"; // für rendering ins DOM
+import { BrowserRouter } from "react-router-dom"; // navigation zwischen Seiten
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"; // Server State management
+import App from "./App"; // Haupt App (Wurzelkomponente)
+import "./index.css"; // Globale Styles
 
+// erstellt ein neues objekt mit default einstellungen
 const queryClient = new QueryClient();
 
+// Hierarchie der Provider
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
+    {" "}
+    {/* äusserste Schicht */}
     <QueryClientProvider client={queryClient}>
+      {" "}
+      {/* 2. schicht */}
       <BrowserRouter>
-        <App />
+        {" "}
+        {/* 3. schicht */}
+        <App /> {/* innerste schicht (die App selbst) */}
       </BrowserRouter>
     </QueryClientProvider>
   </React.StrictMode>,
