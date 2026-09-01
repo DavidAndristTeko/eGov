@@ -8,23 +8,25 @@ export default function Login() {
   const {
     register, // registriert input felder
     handleSubmit, // verarbeitet formular einreichung
-    formState: { errors }, //
+    formState: { errors }, // speichert validierungs fehler
   } = useForm();
   const navigate = useNavigate();
-  const [serverError, setServerError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [serverError, setServerError] = useState(""); // Fehler vom Backend z.b. falsches pw
+  const [isLoading, setIsLoading] = useState(false); // wird gerade angemeldet?
 
   async function onSubmit(values) {
-    setServerError("");
-    setIsLoading(true);
+    // wenn user auf login klickt
+    setServerError(""); // alte fehler nachrichten löschen
+    setIsLoading(true); // button wird deaktiviert
     try {
       const res = await api.post("/api/login", values);
-      useStore.getState().setUser(res.data.user, res.data.token);
-      navigate("/", { replace: true });
+      // values beinhaltet benutzer und pw
+      useStore.getState().setUser(res.data.user, res.data.token); // backend prüft es in mongodb
+      navigate("/", { replace: true }); // ersetzt die history (retour zum login nicht möglich)
     } catch (err) {
       setServerError(err.response?.data?.error || "Login fehlgeschlagen");
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Button aktivieren. egal ob fehler oder nicht
     }
   }
 
@@ -67,6 +69,7 @@ export default function Login() {
             <input
               type="password"
               {...register("password", {
+                // registiriert das input feld bei useform
                 required: "Passwort ist erforderlich",
               })}
               className="w-full border border-[#878d92] bg-[#e3e3cd] px-4 py-2 text-[#49494d] focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#df6747]"

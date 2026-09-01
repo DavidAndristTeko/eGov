@@ -1,13 +1,16 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react"; // useMemo für optimierte Performance (berechnet Werte nur wenn nötig)
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api/apiClient";
 import useStore from "../store/useStore";
 import OrderFormModal, { needsOrderForm } from "../components/OrderFormModal";
 
+// intelligentes Datenfetching
 async function fetchProducts({ queryKey }) {
-  const [, filters] = queryKey;
+  // gibt queryKey
+  const [, filters] = queryKey; // dekonstruiere das 2. element
   const params = {
+    // nur nicht-leere Filter senden
     name: filters.search || undefined,
     minPrice: filters.minPrice || undefined,
     maxPrice: filters.maxPrice || undefined,
@@ -17,6 +20,7 @@ async function fetchProducts({ queryKey }) {
 }
 
 function ProductSkeleton() {
+  // loading Placeholder
   return (
     <div className="animate-pulse border border-[#878d92]/40 bg-[#e3e3cd] p-6">
       <div className="mb-4 h-6 rounded-sm bg-[#878d92]/30"></div>
@@ -27,22 +31,26 @@ function ProductSkeleton() {
 }
 
 export default function Products() {
+  // Produktliste mit Filtern
   const [formProduct, setFormProduct] = useState(null);
   const [filters, setFilters] = useState({
+    // aktuelle Filter-Werte
     search: "",
     minPrice: "",
     maxPrice: "",
   });
   const { data, isLoading, error } = useQuery(
-    ["products", filters],
+    ["products", filters], // neuladen wenn filter ändern
     fetchProducts,
-    { keepPreviousData: true },
+    { keepPreviousData: true }, // zeigt alte Produkte während neue Daten laden
   );
   const user = useStore((s) => s.user);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const products = data || [];
+  const products = data || []; // vom Server geladene Produkte
+  // Performance Optimierung
   const filteredProducts = useMemo(() => {
+    // wird nur ausgeführt wenn filters, prodcuts sich ändert
     const search = filters.search.trim().toLowerCase();
     const minimum = filters.minPrice === "" ? 0 : Number(filters.minPrice);
     const maximum =
@@ -63,16 +71,20 @@ export default function Products() {
   }, [filters, products]);
 
   function updateFilter(event) {
+    // aktualisiert filter
     setFilters({ ...filters, [event.target.name]: event.target.value });
   }
 
   function resetFilters() {
+    // setzt alles auf leer
     setFilters({ search: "", minPrice: "", maxPrice: "" });
   }
 
   const orderMutation = useMutation(
+    // Bestellung
     ({ product, details }) =>
       api.post("/api/orders", {
+        // POST zu /api/orders
         orderId: Date.now(),
         product: product._id,
         user: user.id,
@@ -81,6 +93,7 @@ export default function Products() {
       }),
     {
       onSuccess: () => {
+        // wenn success gehe zu /orders
         queryClient.invalidateQueries(["orders", user?.id]);
         navigate("/orders");
       },

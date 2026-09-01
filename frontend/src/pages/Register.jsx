@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { useForm } from "react-hook-form"; // formular hook
+import { zodResolver } from "@hookform/resolvers/zod"; // verbindet Zod Validierung mit useForm
+import * as z from "zod"; // neue Bibliothek
 import { useNavigate } from "react-router-dom";
 import api from "../api/apiClient";
 
 const registerSchema = z
   .object({
     firstname: z
-      .string()
-      .trim()
-      .min(1, "Vorname ist erforderlich")
-      .min(2, "Vorname muss mindestens 2 Zeichen haben"),
+      .string() // muss string sein
+      .trim() // space entfernen
+      .min(1, "Vorname ist erforderlich") // mind 1 zeichen
+      .min(2, "Vorname muss mindestens 2 Zeichen haben"), // mind 1 zeichen
     lastname: z
       .string()
       .trim()
@@ -19,24 +19,27 @@ const registerSchema = z
       .min(2, "Nachname muss mindestens 2 Zeichen haben"),
     userName: z.string().min(2, "Username muss mindestens 2 Zeichen haben"),
     password: z.string().min(8, "Passwort muss mindestens 8 Zeichen haben"),
-    passwordConfirm: z.string(),
+    passwordConfirm: z.string(), // wird mit password verglichen
   })
+  // zusätzliche Validerung
   .refine((d) => d.password === d.passwordConfirm, {
-    path: ["passwordConfirm"],
+    // stimmen die PWs überein?
+    path: ["passwordConfirm"], // fehler würde hier angezeigt werden
     message: "Passwörter stimmen nicht überein",
   });
 
 export default function Register() {
   const {
-    register,
-    handleSubmit,
+    register, // registriert Input Felder
+    handleSubmit, // Verarbeitet Form einreichung
     formState: { errors },
-  } = useForm({ resolver: zodResolver(registerSchema) });
+  } = useForm({ resolver: zodResolver(registerSchema) }); // nutzt Zod oben zur Validierung
   const navigate = useNavigate();
-  const [serverError, setServerError] = useState("");
+  const [serverError, setServerError] = useState(""); // Fehler vom Backend
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (data) => {
+    // Registierung
     setServerError("");
     setIsLoading(true);
     try {
@@ -48,9 +51,10 @@ export default function Register() {
         password: data.password,
       };
 
-      const res = await api.post("/api/users", payload);
+      const res = await api.post("/api/users", payload); // sendet es zum backend
       if (res?.status === 201) {
-        navigate("/login", { replace: true });
+        // bei 201
+        navigate("/login", { replace: true }); // navigiert zu /login
       }
     } catch (err) {
       const message =

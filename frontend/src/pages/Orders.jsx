@@ -1,48 +1,88 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import useStore from "../store/useStore";
-import api from "../api/apiClient";
+// holt daten auf dem server, ändrt daten auf dem server, manager aller daten
+import useStore from "../store/useStore"; // globale user daten
+import api from "../api/apiClient"; // API Client
 
 async function fetchOrders(userId) {
+  // Daten vom Server holen
   const res = await api.get(`/api/users/${userId}/orders`);
   return res.data;
 }
 
+// Normalisiert Keys um Inkonsistenzen zu beheben (verschiedene Schreibweisen)
+function normalizeKey(key) {
+  return key.toLowerCase().replace(
+    /[äöü]/g,
+    (c) =>
+      ({
+        ä: "ae",
+        ö: "oe",
+        ü: "ue",
+      })[c],
+  );
+}
+
+// Einheitliche Labelübersetzung (nur eine Version pro Key)
+const LABEL_MAP = {
+  artdesgebaeudes: "Art des Gebäudes",
+  bauortadresse: "Bauort / Adresse",
+  projektbeschreibung: "Projektbeschreibung",
+  vorname: "Vorname",
+  nachname: "Nachname",
+  geburtsdatum: "Geburtsdatum",
+  adresse: "Adresse",
+  kategorie: "Fahrzeugkategorie",
+  tierart: "Tierart",
+  anzahltiere: "Anzahl Tiere",
+  haltungsortadresse: "Haltungsort / Adresse",
+};
+
 export default function Orders() {
+  // Verschiedene States
   const [orderToCancel, setOrderToCancel] = useState(null);
-  const user = useStore((s) => s.user);
-  const queryClient = useQueryClient();
+  const user = useStore((s) => s.user); // aktuelle Benutzer laden aus dem store
+  const queryClient = useQueryClient(); // manager für alle daten
 
   const { data, isLoading, error } = useQuery(
-    ["orders", user?.id],
-    () => fetchOrders(user.id),
+    // Daten laden
+    ["orders", user?.id], // eindeutige ID abfrage
+    () => fetchOrders(user.id), // funktion zum laden der Daten
     {
-      enabled: !!user?.id,
+      enabled: !!user?.id, // nur laden wenn user.id existiert
     },
-  );
+  ); // ergebnis: data: geladene bestellungen, isloading true während laden, false danach, error: fehler falls was schiefgeht
 
   const mutation = useMutation(
-    (orderId) => api.delete(`/api/orders/${orderId}`),
+    (orderId) => api.delete(`/api/orders/${orderId}`), // sendet delete zu /api/orders/123, löscht die bestellung auf dem server
     {
       onMutate: async (orderId) => {
-        await queryClient.cancelQueries(["orders", user.id]);
-        const previous = queryClient.getQueryData(["orders", user.id]);
-        queryClient.setQueryData(["orders", user.id], (old = []) =>
-          old.map((o) => (o._id === orderId ? { ...o, orderStatus: 2 } : o)),
+        // Optimistic Update
+        await queryClient.cancelQueries(["orders", user.id]); // stoppt aktuelle Queries (keine neue Anfragen)
+        const previous = queryClient.getQueryData(["orders", user.id]); //Speichert alte Daten (als Backup, falls es schiefgeht)
+        queryClient.setQueryData(
+          ["orders", user.id],
+          (
+            old = [], // ändert die Daten sofort im cache (ohne auf den Server zu warten)
+          ) =>
+            old.map((o) => (o._id === orderId ? { ...o, orderStatus: 2 } : o)),
         );
-        return { previous };
+        return { previous }; // falls Server antwortet mit Fehler -> rollback zu previous
       },
-      onError: (err, orderId, context) => {
-        queryClient.setQueryData(["orders", user.id], context.previous);
+      onError: (_err, _orderId, { previous }) => {
+        // destrukturiert direkt den context
+        queryClient.setQueryData(["orders", user.id], previous);
         alert("Fehler beim Stornieren der Bestellung.");
       },
       onSettled: () => {
+        // egal ob erfolg oder fehler: sagt dass die daten veraltet sind, dass frische daten beim nächsten mal geholt werden
         queryClient.invalidateQueries(["orders", user.id]);
       },
     },
   );
 
   if (!user) {
+    // nicht angemeldet
     return (
       <section className="mx-auto max-w-4xl px-4 py-12">
         <div className="border border-[#df6747]/40 bg-[#df6747]/10 p-6 text-center text-[#49494d]">
@@ -160,48 +200,28 @@ export default function Orders() {
                 </div>
               </div>
 
-              {o.orderDetails && Object.keys(o.orderDetails).length > 0 && (
-                <div className="mb-6 border-t border-[#878d92]/40 pt-4">
-                  <p className="mb-2 text-sm text-[#878d92]">
-                    Angaben zum Gesuch
-                  </p>
-                  <dl className="grid grid-cols-1 gap-2 text-sm md:grid-cols-2">
-                    {Object.entries(o.orderDetails).map(([key, value]) => {
-                      const labelMap = {
-                        artDesGebaeudes: "Art des Gebäudes",
-                        artDesGebauedes: "Art des Gebäudes",
-                        artdesgebaeudes: "Art des Gebäudes",
-                        bauortAdresse: "Bauort / Adresse",
-                        bauortadresse: "Bauort / Adresse",
-                        bauort: "Bauort / Adresse",
-                        projektBeschreibung: "Projektbeschreibung",
-                        projektbeschreibung: "Projektbeschreibung",
-                        projekt: "Projektbeschreibung",
-                        vorname: "Vorname",
-                        nachname: "Nachname",
-                        geburtsdatum: "Geburtsdatum",
-                        adresse: "Adresse",
-                        kategorie: "Fahrzeugkategorie",
-                        tierart: "Tierart",
-                        anzahlTiere: "Anzahl Tiere",
-                        anzahltiere: "Anzahl Tiere",
-                        haltungsort: "Haltungsort / Adresse",
-                        haltungsortAdresse: "Haltungsort / Adresse",
-                        haltungsortadresse: "Haltungsort / Adresse",
-                      };
+              {o.orderDetails &&
+                Object.keys(o.orderDetails).length > 0 && ( // nur wenn orderDetails existieren UND nicht leer
+                  <div className="mb-6 border-t border-[#878d92]/40 pt-4">
+                    <p className="mb-2 text-sm text-[#878d92]">
+                      Angaben zum Gesuch
+                    </p>
+                    <dl className="grid grid-cols-1 gap-2 text-sm md:grid-cols-2">
+                      {Object.entries(o.orderDetails).map(([key, value]) => {
+                        // Normalisiere den Key um verschiedene Schreibweisen zu handhaben
+                        const normalizedKey = normalizeKey(key);
+                        const label = LABEL_MAP[normalizedKey] || key;
 
-                      return (
-                        <div key={key}>
-                          <dt className="text-[#878d92]">
-                            {labelMap[key] || key}
-                          </dt>
-                          <dd className="text-[#49494d]">{value}</dd>
-                        </div>
-                      );
-                    })}
-                  </dl>
-                </div>
-              )}
+                        return (
+                          <div key={key}>
+                            <dt className="text-[#878d92]">{label}</dt>
+                            <dd className="text-[#49494d]">{value}</dd>
+                          </div>
+                        );
+                      })}
+                    </dl>
+                  </div>
+                )}
 
               {o.orderStatus !== 2 && (
                 <div className="flex gap-3">

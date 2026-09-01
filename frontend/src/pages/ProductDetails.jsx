@@ -1,48 +1,52 @@
 import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useParams, useNavigate } from "react-router-dom"; // holt URL Parameter, nav zwischen Seiten
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"; // datenfetching und änderungen
 import api from "../api/apiClient";
 import useStore from "../store/useStore";
-import OrderFormModal, { needsOrderForm } from "../components/OrderFormModal";
+import OrderFormModal, { needsOrderForm } from "../components/OrderFormModal"; // modal für bestellformulare, prüft: braucht dieses produkt ein formular?
 
 async function fetchProduct(id) {
+  // daten laden
   const res = await api.get(`/api/products/${id}`);
   return res.data;
 }
 
 export default function ProductDetails() {
-  const [showOrderForm, setShowOrderForm] = useState(false);
-  const { id } = useParams();
+  const [showOrderForm, setShowOrderForm] = useState(false); // soll das bestellformular angezeigt werden?
+  const { id } = useParams(); // holt URL Parameter
   const navigate = useNavigate();
   const { data, isLoading, error } = useQuery(
     ["product", id],
     () => fetchProduct(id),
     {
-      enabled: !!id,
+      enabled: !!id, // nur laden wenn id existiert
     },
   );
-  const user = useStore((s) => s.user);
-  const queryClient = useQueryClient();
+  const user = useStore((s) => s.user); // aktueller user
+  const queryClient = useQueryClient(); // manager um daten zu aktualiseren
   const orderMutation = useMutation(
+    // Bestellung erstellen
     (details = {}) =>
       api.post("/api/orders", {
-        orderId: Date.now(),
-        product: data._id,
-        user: user.id,
-        orderStatus: 1,
-        orderDetails: details,
+        orderId: Date.now(), // eindeutige Bestellnummer
+        product: data._id, // eindeutiges Produkt
+        user: user.id, // eindeutiger user
+        orderStatus: 1, // status 1 = aktiv
+        orderDetails: details, // formular angaben (z.b. adresse)
       }),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["orders", user?.id]);
-        navigate("/orders");
+        navigate("/orders"); // gehe zu bestellseite
       },
     },
   );
 
   function orderProduct(details = {}) {
+    // intelligente Bestellung
     if (needsOrderForm(data.productName) && Object.keys(details).length === 0) {
-      setShowOrderForm(true);
+      // prüft ob das produkt ein formular braucht
+      setShowOrderForm(true); // wenn ja und keine details vorhanden öffnet setShoworderForm, sonst wird die bestellung direkt zum server gesendet
       return;
     }
     orderMutation.mutate(details);
