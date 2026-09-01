@@ -40,15 +40,17 @@ export default function Products() {
     maxPrice: "",
   });
   const { data, isLoading, error } = useQuery(
-    ["products", filters],
+    ["products", filters], // neuladen wenn filter ändern
     fetchProducts,
-    { keepPreviousData: true },
+    { keepPreviousData: true }, // zeigt alte Produkte während neue Daten laden
   );
   const user = useStore((s) => s.user);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const products = data || [];
+  const products = data || []; // vom Server geladene Produkte
+  // Performance Optimierung
   const filteredProducts = useMemo(() => {
+    // wird nur ausgeführt wenn filters, prodcuts sich ändert
     const search = filters.search.trim().toLowerCase();
     const minimum = filters.minPrice === "" ? 0 : Number(filters.minPrice);
     const maximum =
@@ -69,16 +71,20 @@ export default function Products() {
   }, [filters, products]);
 
   function updateFilter(event) {
+    // aktualisiert filter
     setFilters({ ...filters, [event.target.name]: event.target.value });
   }
 
   function resetFilters() {
+    // setzt alles auf leer
     setFilters({ search: "", minPrice: "", maxPrice: "" });
   }
 
   const orderMutation = useMutation(
+    // Bestellung
     ({ product, details }) =>
       api.post("/api/orders", {
+        // POST zu /api/orders
         orderId: Date.now(),
         product: product._id,
         user: user.id,
@@ -87,6 +93,7 @@ export default function Products() {
       }),
     {
       onSuccess: () => {
+        // wenn success gehe zu /orders
         queryClient.invalidateQueries(["orders", user?.id]);
         navigate("/orders");
       },
