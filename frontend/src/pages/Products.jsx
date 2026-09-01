@@ -217,12 +217,25 @@ export default function Products() {
               key={p._id}
               className="flex h-full flex-col overflow-hidden border border-[#878d92]/40 bg-[#e3e3cd] transition-shadow hover:shadow-[0_8px_24px_rgba(73,73,77,0.16)]"
             >
-              <div className="flex h-32 items-center justify-center bg-[#878d92] px-5 text-center">
-                <div className="text-lg font-semibold tracking-tight text-[#e3e3cd]">
-                  {p.productName}
-                </div>
+              <div className="relative h-32 overflow-hidden">
+                {p.imageUrl ? (
+                  <img
+                    src={p.imageUrl}
+                    alt={p.productName}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center bg-[#878d92] px-5 text-center">
+                    <div className="text-lg font-semibold tracking-tight text-[#e3e3cd]">
+                      {p.productName}
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="p-6 flex flex-col flex-1">
+                <h3 className="mb-2 text-lg font-semibold tracking-tight text-[#49494d]">
+                  {p.productName}
+                </h3>
                 <p className="mb-4 min-h-[3rem] text-sm text-[#878d92] line-clamp-2">
                   {p.description || "Keine Beschreibung verfügbar"}
                 </p>
