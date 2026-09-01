@@ -50,13 +50,16 @@ export default function Products() {
         ? Number.MAX_SAFE_INTEGER
         : Number(filters.maxPrice);
 
-    return products.filter((product) => {
-      const searchableText =
-        `${product.productName} ${product.description || ""}`.toLowerCase();
-      const matchesSearch = !search || searchableText.includes(search);
-      const matchesPrice = product.price >= minimum && product.price <= maximum;
-      return matchesSearch && product.productActive && matchesPrice;
-    });
+    return products
+      .filter((product) => {
+        const searchableText =
+          `${product.productName} ${product.description || ""}`.toLowerCase();
+        const matchesSearch = !search || searchableText.includes(search);
+        const matchesPrice =
+          product.price >= minimum && product.price <= maximum;
+        return matchesSearch && product.productActive && matchesPrice;
+      })
+      .sort((a, b) => a.productId - b.productId); //Sortiert aufsteigend nach productId, damit die 3 echten Dienstleistungen (2001-2003) immer zuerst erscheinen
   }, [filters, products]);
 
   function updateFilter(event) {
