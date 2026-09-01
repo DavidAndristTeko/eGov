@@ -1,13 +1,16 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react"; // useMemo für optimierte Performance (berechnet Werte nur wenn nötig)
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api/apiClient";
 import useStore from "../store/useStore";
 import OrderFormModal, { needsOrderForm } from "../components/OrderFormModal";
 
+// intelligentes Datenfetching
 async function fetchProducts({ queryKey }) {
-  const [, filters] = queryKey;
+  // gibt queryKey
+  const [, filters] = queryKey; // dekonstruiere das 2. element
   const params = {
+    // nur nicht-leere Filter senden
     name: filters.search || undefined,
     minPrice: filters.minPrice || undefined,
     maxPrice: filters.maxPrice || undefined,
@@ -17,6 +20,7 @@ async function fetchProducts({ queryKey }) {
 }
 
 function ProductSkeleton() {
+  // loading Placeholder
   return (
     <div className="animate-pulse border border-[#878d92]/40 bg-[#e3e3cd] p-6">
       <div className="mb-4 h-6 rounded-sm bg-[#878d92]/30"></div>
@@ -27,8 +31,10 @@ function ProductSkeleton() {
 }
 
 export default function Products() {
+  // Produktliste mit Filtern
   const [formProduct, setFormProduct] = useState(null);
   const [filters, setFilters] = useState({
+    // aktuelle Filter-Werte
     search: "",
     minPrice: "",
     maxPrice: "",
