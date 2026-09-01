@@ -1,33 +1,38 @@
+// axios: javascript bibliothek zum senden von HTTP anfragen zum serer
 import axios from "axios";
 
+// sagt wo der Server ist
 const baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
+// erstellt client (user welcher wiedererkannt wird)
 const api = axios.create({
-  baseURL,
+  baseURL, // URL von oben
   headers: {
+    //standardheader
     "Content-Type": "application/json",
   },
 });
 
-// Request interceptor: attach token from localStorage if present
+// interceptor: wie türsteher, der token von localstore automatisch hinzugefügt wenn vorhanden
 api.interceptors.request.use(
   (config) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token"); // holt token
       if (token) {
-        config.headers = config.headers || {};
+        // wenn token vorhanden
+        config.headers = config.headers || {}; // stellt sicher das headers existiert oder erstellt sonst ein leeres objekt
         config.headers.Authorization = `Bearer ${token}`;
       }
     } catch (e) {
-      // ignore localStorage errors in some environments
+      // fehler in localStorage ignorieren
     }
-    return config;
+    return config; // sendet die anfrage weiter inkl token im header
   },
-  (error) => Promise.reject(error),
+  (error) => Promise.reject(error), // leitet den fehler weiter falls einer vorhanden
 );
 
 api.interceptors.response.use(
-  (res) => res,
+  (res) => res, // wenn alles ok -> antwort wetier senden
   (error) => {
     if (error.response?.status === 401) {
       error.userMessage =
@@ -36,7 +41,7 @@ api.interceptors.response.use(
         localStorage.removeItem("token");
       } catch (e) {}
     }
-    return Promise.reject(error);
+    return Promise.reject(error); // leitet den fehler weiter falls einer vorhanden
   },
 );
 

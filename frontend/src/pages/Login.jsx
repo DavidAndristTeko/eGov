@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import api from "../api/apiClient";
-import { setToken } from "../auth/auth";
-import useStore from "../store/useStore";
+import { useState } from "react"; // Hook für lokale States
+import { useForm } from "react-hook-form"; // spezial Hook für Formular Verwaltung
+import { useNavigate } from "react-router-dom"; // nav zu anderen seiten
+import api from "../api/apiClient"; //API Client zu Server
+import useStore from "../store/useStore"; // globaler store für user daten
 
 export default function Login() {
   const {

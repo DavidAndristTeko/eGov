@@ -1,9 +1,8 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import useStore from "../store/useStore";
+import { Link } from "react-router-dom"; // navigation ohne Seite neu zu laden
+import useStore from "../store/useStore"; // Zugriff auf globale Daten (User, Token, etc.)
 
 export default function Home() {
-  const user = useStore((state) => state.user);
+  const user = useStore((state) => state.user); // holt den aktuellen User wenn angmeldet
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-14">
