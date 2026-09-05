@@ -114,7 +114,7 @@ export default function Account() {
           ))}
           <button
             type="submit"
-            disabled={isSaving || isDeleting} // button wird deaktiviert während issaving oder is deleting
+            disabled={isSaving || isDeleting} // button wird deaktiviert während isSaving oder isDeleting
             className="w-full rounded-sm bg-[#b42f32] px-4 py-2 font-medium text-[#e3e3cd] transition-colors hover:bg-[#8f2528] disabled:opacity-50"
           >
             {isSaving ? "Wird gespeichert..." : "Änderungen speichern"}

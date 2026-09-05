@@ -72,6 +72,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="*" element={<h1>Seite nicht gefunden</h1>} />
         </Routes>
       </main>
       <Footer />
