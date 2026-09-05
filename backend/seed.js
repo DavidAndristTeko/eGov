@@ -54,7 +54,7 @@ async function seed() {
     ]);
 
     const products = await product.create([
-      //Es werden 4 Produkte generiert, die zum eGov Konzept passen und individuelle Bestellformulare haben
+      //Es werden 3 Produkte generiert, die zum eGov Konzept passen und individuelle Bestellformulare haben
       {
         productId: 2001,
         productName: "Gesuch für Wildtierhaltungsbewilligung",
@@ -84,6 +84,7 @@ async function seed() {
         productActive: true,
         price: 400,
       },
+      //Zusätzlich werden 9 "Filler-Produkte" generiert, mit denen wir Such-/Filterfunktionen testen können
       {
         productId: 2004,
         productName: "Gesuch die Kappelbrücke abzureissen",
@@ -92,12 +93,11 @@ async function seed() {
         productActive: true,
         price: 20,
       },
-      //Zusätzlich werden 8 "Filler-Produkte" generiert, mit denen wir Such-/Filterfunktionen testen können
       {
         productId: 2005,
         productName: "Monitor",
         description: "27-Zoll UltraWide-Monitor",
-        imageUrl: "https://i.imgur.com/kHDb7VJ.png",
+        imageUrl: "https://i.imgur.com/qHTd4XF.png",
         productActive: true,
         price: 349,
       },

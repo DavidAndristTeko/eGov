@@ -166,8 +166,14 @@ export default function Orders() {
                 <div>
                   <p className="mb-1 text-sm text-[#878d92]">Status</p>
                   <p className="text-lg font-bold">
-                    <span className="inline-block bg-[#df6747]/20 px-3 py-1 text-sm text-[#b42f32]">
-                      {o.orderStatus === 2 ? "Inaktiv" : "Aktiv"}
+                    <span
+                      className={
+                        o.orderStatus === 2
+                          ? "inline-block bg-[#b42f32]/20 px-3 py-1 text-sm text-[#b42f32]"
+                          : "inline-block bg-[#4f7942]/20 px-3 py-1 text-sm text-[#4f7942]"
+                      }
+                    >
+                      {o.orderStatus === 2 ? "Storniert" : "Wird ausgeliefert"}
                     </span>
                   </p>
                 </div>
