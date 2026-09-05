@@ -13,7 +13,7 @@ const api = axios.create({
   },
 });
 
-// interceptor: wie türsteher, der token von localstore automatisch hinzugefügt wenn vorhanden
+// interceptor: wie türsteher, der token von localstore automatisch dem header hinzugefügt wenn vorhanden
 api.interceptors.request.use(
   (config) => {
     try {
@@ -32,7 +32,7 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-  (res) => res, // wenn alles ok -> antwort wetier senden
+  (res) => res, // wenn alles ok -> antwort weiter senden
   (error) => {
     if (error.response?.status === 401) {
       error.userMessage =
