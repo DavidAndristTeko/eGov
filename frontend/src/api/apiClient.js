@@ -1,4 +1,4 @@
-// axios: javascript bibliothek zum senden von HTTP anfragen zum serer
+// axios: javascript bibliothek zum senden von HTTP anfragen zum server
 import axios from "axios";
 
 // sagt wo der Server ist
