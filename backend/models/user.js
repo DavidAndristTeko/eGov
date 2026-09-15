@@ -41,13 +41,8 @@ const userSchema = new Schema({
 });
 
 //Bevor eine .save() Operation auf das Model ausgeführt wird..
+//(Reguläre anstatt Pfeilfunktion wird genutzt, da "this" in Pfeilfunktion nicht verlässlich auf das Objekt verweisen würde)
 userSchema.pre("save", async function (next) {
-  /*...und wenn das Passwort auch wirklich eingegeben wurde...
-  (Reguläre anstatt Pfeilfunktion wird genutzt, da "this" in Pfeilfunktion nicht verlässlich auf das Objekt verweisen würde)*/
-  if (!this.isModified("password")) {
-    //Falls Passwort nicht angepasst wurde aus Funktion treten
-    return;
-  }
   //...das Passwort hashen. 10 Salt rounds, da dies der konventionel genutzte wert ist.
   this.password = await bcrypt.hash(this.password, 10);
 });
