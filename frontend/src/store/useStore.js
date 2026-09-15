@@ -11,7 +11,7 @@ import { clearToken, setToken } from "../auth/auth";
 export const useStore = create(
   // äussere Schicht -> macht es zu einem Hook
   persist(
-    // mittlere schicht -> macht es persistent
+    // mittlere schicht -> macht es persistent/permanent
     (set) => ({
       // Inhalt kommt hier: set => ({...})
       user: null, // noch nicht eingeloggt

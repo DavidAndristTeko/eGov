@@ -39,10 +39,18 @@ export default function Products() {
     minPrice: "",
     maxPrice: "",
   });
+  const minimumPrice =
+    filters.minPrice === "" ? null : Number(filters.minPrice);
+  const maximumPrice =
+    filters.maxPrice === "" ? null : Number(filters.maxPrice);
+  const isPriceRangeValid =
+    minimumPrice === null ||
+    maximumPrice === null ||
+    minimumPrice < maximumPrice;
   const { data, isLoading, error } = useQuery(
     ["products", filters], // neuladen wenn filter ändern
     fetchProducts,
-    { keepPreviousData: true }, // zeigt alte Produkte während neue Daten laden
+    { keepPreviousData: true, enabled: isPriceRangeValid }, // zeigt alte Produkte während neue Daten laden
   );
   const user = useStore((s) => s.user);
   const queryClient = useQueryClient();
@@ -51,6 +59,7 @@ export default function Products() {
   // Performance Optimierung
   const filteredProducts = useMemo(() => {
     // wird nur ausgeführt wenn filters, prodcuts sich ändert
+    if (!isPriceRangeValid) return [];
     const search = filters.search.trim().toLowerCase();
     const minimum = filters.minPrice === "" ? 0 : Number(filters.minPrice);
     const maximum =
@@ -68,7 +77,7 @@ export default function Products() {
         return matchesSearch && product.productActive && matchesPrice;
       })
       .sort((a, b) => a.productId - b.productId); //Sortiert aufsteigend nach productId, damit die 3 echten Dienstleistungen (2001-2003) immer zuerst erscheinen
-  }, [filters, products]);
+  }, [filters, isPriceRangeValid, products]);
 
   function updateFilter(event) {
     // aktualisiert filter
@@ -198,6 +207,11 @@ export default function Products() {
             </label>
           </div>
         </div>
+        {!isPriceRangeValid && (
+          <p className="mt-3 text-sm text-[#b42f32]" role="alert">
+            Der Preis ab muss kleiner sein als der Preis bis.
+          </p>
+        )}
         <div className="mt-4 flex items-center justify-between gap-4 flex-wrap">
           <p className="text-sm text-[#878d92]">
             {filteredProducts.length} Produkt
