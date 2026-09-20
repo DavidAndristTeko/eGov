@@ -1,5 +1,6 @@
 // "Wächter": Datei ist eine Schutzkomponente
 
+import React from "react";
 import { Navigate } from "react-router-dom";
 import { isAuthenticated } from "../auth/auth";
 
